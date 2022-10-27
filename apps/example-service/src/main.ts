@@ -3,22 +3,34 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { initWinston } from '@spotlyt-backend/common';
 
 import { AppModule } from './app/app.module';
 
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app_name = "example_service";
+
+  const app = await NestFactory.create(AppModule, {
+    logger: initWinston(app_name)
+  });
+ 
   const globalPrefix = 'example';
   app.setGlobalPrefix(globalPrefix);
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('EXAMPLE_PORT', 3333);
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+
+
+  const url = await app.getUrl();
+  // logger.info(`🚀 Application is running on port: ${url}/${globalPrefix}`);
 }
 
-bootstrap();
+(async (): Promise<void> => {
+  await bootstrap();
+})().catch((error: Error) => {
+  // logger.error(`Nest application error: ${error.message}`);
+});
