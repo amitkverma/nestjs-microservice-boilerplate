@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NODE_ENV } from '../constants';
-import { Environment } from '../enums';
+import { NODE_ENV } from '@spotlyt-backend/data/constants';
+import { Environment } from '@spotlyt-backend/data/enums';
 
 @Injectable()
 export class AppConfig {

@@ -1,6 +1,6 @@
+import { Environment } from '@spotlyt-backend/data/enums';
 import { plainToInstance } from 'class-transformer';
 import { IsEnum, IsNumber, validateSync } from 'class-validator';
-import { Environment } from '../enums';
 
 class EnvironmentVariables {
   @IsEnum(Environment)
