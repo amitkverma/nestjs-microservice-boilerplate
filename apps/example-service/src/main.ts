@@ -3,10 +3,10 @@
  * This is only a minimal backend to get started.
  */
 
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { initWinston } from '@spotlyt-backend/common';
-
 import { AppModule } from './app/app.module';
 
 
@@ -26,11 +26,11 @@ async function bootstrap() {
 
 
   const url = await app.getUrl();
-  // logger.info(`🚀 Application is running on port: ${url}/${globalPrefix}`);
+  Logger.log(`🚀 Application is running on port: ${url}/${globalPrefix}`);
 }
 
 (async (): Promise<void> => {
   await bootstrap();
 })().catch((error: Error) => {
-  // logger.error(`Nest application error: ${error.message}`);
+  Logger.error(`Nest application error: ${error.message}`);
 });
