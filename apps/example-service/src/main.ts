@@ -8,7 +8,8 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { initWinston } from '@spotlyt-backend/common';
 import { AppModule } from './app/app.module';
-
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as swStats from 'swagger-stats';
 
 async function bootstrap() {
   const app_name = "example_service";
@@ -20,10 +21,20 @@ async function bootstrap() {
   const globalPrefix = 'example';
   app.setGlobalPrefix(globalPrefix);
 
+  const config = new DocumentBuilder()
+    .setTitle('Example Service')
+    .setDescription('The example API description')
+    .setVersion('1.0')
+    .addTag('example')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(`/${globalPrefix}/docs`, app, document);
+  app.use(swStats.getMiddleware({swaggerSpec: (document), uriPath: `/${globalPrefix}/stats` }));
+
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('EXAMPLE_PORT', 3333);
   await app.listen(port);
-
 
   const url = await app.getUrl();
   Logger.log(`🚀 Application is running on port: ${url}/${globalPrefix}`);

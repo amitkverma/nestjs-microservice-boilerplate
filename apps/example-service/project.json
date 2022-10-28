@@ -13,6 +13,15 @@
         "outputPath": "dist/apps/example-service",
         "main": "apps/example-service/src/main.ts",
         "tsConfig": "apps/example-service/tsconfig.app.json",
+        "tsPlugins": [
+          {
+            "name": "@nestjs/swagger/plugin",
+            "options": {
+              "classValidatorShim": false,
+              "introspectComments": true
+            }
+          }
+       ],
         "assets": ["apps/example-service/src/assets"]
       },
       "configurations": {
