@@ -10,6 +10,7 @@ import { initWinston } from '@spotlyt-backend/common';
 import { AppModule } from './app/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as swStats from 'swagger-stats';
+import { ApplicationReadiness } from '@spotlyt-backend/common';
 
 async function bootstrap() {
   const app_name = "example_service";
@@ -35,9 +36,11 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('EXAMPLE_PORT', 3333);
   await app.listen(port);
+  ApplicationReadiness.getInstance().isReady = true;
 
   const url = await app.getUrl();
   Logger.log(`🚀 Application is running on port: ${url}/${globalPrefix}`);
+
 }
 
 (async (): Promise<void> => {

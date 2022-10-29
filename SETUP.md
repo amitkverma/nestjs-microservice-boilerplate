@@ -31,3 +31,21 @@ app.use(swStats.getMiddleware({swaggerSpec: (document), uriPath: `/${globalPrefi
     }
     }
 ```
+
+3. Health and Readiness module can be enabled using following instruction
+```typescript
+
+// Readiness
+ApplicationReadiness.getInstance().isReady = true;  // in main.ts
+
+
+// Health
+const health_config: IHealthConfig = {
+  host: 'localhost',
+  port: 3333,
+  routePath: 'example'
+}
+
+CommonModule.register({ health: health_config }) // add config in app.module.ts
+
+```
