@@ -10,7 +10,7 @@ import { initWinston } from '@spotlyt-backend/common';
 import { AppModule } from './app/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as swStats from 'swagger-stats';
-import { ApplicationReadiness } from '@spotlyt-backend/common';
+import { ApplicationReadiness, secureApplication } from '@spotlyt-backend/common';
 
 async function bootstrap() {
   const app_name = "example_service";
@@ -18,6 +18,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: initWinston(app_name)
   });
+
+  secureApplication(app);
  
   const globalPrefix = 'example';
   app.setGlobalPrefix(globalPrefix);
