@@ -9,8 +9,7 @@ import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
 
 const health_config: IHealthConfig = {
   host: 'localhost',
-  port: 3333,
-  routePath: 'example'
+  port: 3333
 }
 
 @Module({

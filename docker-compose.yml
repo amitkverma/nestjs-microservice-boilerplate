@@ -1,0 +1,84 @@
+version: "3.9"
+
+networks:
+  spotlyt:
+    driver: bridge
+
+services:
+  core-service:
+    container_name: core-service
+    build:
+      context: ./
+      cache_from:
+        - base-image:nx-base
+      dockerfile: ./apps/core-service/Dockerfile
+      args:
+        NODE_ENV: "development"
+        BUILD_FLAG: ""
+        PORT: 3000
+    image: core-service:nx-dev
+    hostname: core-service
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: "development"
+      PORT: 3000
+    networks:
+      - spotlyt
+    # restart: on-failure
+    # healthcheck:
+    #   test: [ "CMD", "curl", "-f", "http://localhost:3000/swagger-stats/metrics" ]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 10
+
+  example-service:
+    container_name: example-service
+    build:
+      context: ./
+      cache_from:
+        - base-image:nx-base
+      dockerfile: ./apps/example-service/Dockerfile
+      args:
+        NODE_ENV: "development"
+        BUILD_FLAG: ""
+        PORT: 3333
+    image: example-service:nx-dev
+    hostname: example-service
+    ports:
+      - "3333:3333"
+    environment:
+      NODE_ENV: "development"
+      PORT: 3333
+    networks:
+      - spotlyt
+    # restart: on-failure
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:3334/swagger-stats/metrics"]
+    #   interval: 10s
+    #   timeout: 10s
+    #   retries: 10
+  kong:
+    build:
+      context: ./kong
+      dockerfile: Dockerfile
+    container_name: kong
+    restart: unless-stopped
+    command: "kong start"
+    volumes:
+      - ./kong/conf/kong.yml:/usr/local/kong/declarative/kong.yml
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_PROXY_LISTEN_SSL: 0.0.0.0:8443
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    networks:
+      - spotlyt

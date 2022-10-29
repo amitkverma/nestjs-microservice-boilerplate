@@ -6,19 +6,41 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApplicationReadiness, initWinston, secureApplication } from '@spotlyt-backend/common';
+import * as swStats from 'swagger-stats';
 
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'core';
-  app.setGlobalPrefix(globalPrefix);
+  const app_name = "core_service";
+
+  const app = await NestFactory.create(AppModule, {
+    logger: initWinston(app_name)
+  });
+
+  secureApplication(app);
+ 
+  const configPrefix = 'status';
+
+  const config = new DocumentBuilder()
+    .setTitle('Core Service')
+    .setDescription('The core API description')
+    .setVersion('1.0')
+    .addTag('core')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(`/${configPrefix}/docs`, app, document);
+  app.use(swStats.getMiddleware({swaggerSpec: (document), uriPath: `/${configPrefix}/stats` }));
+
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('CORE_PORT', 3000);
   await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+  ApplicationReadiness.getInstance().isReady = true;
+
+  const url = await app.getUrl();
+  Logger.log(`🚀 Application is running on port: ${url}`);
 }
 
 bootstrap();

@@ -21,8 +21,7 @@ async function bootstrap() {
 
   secureApplication(app);
  
-  const globalPrefix = 'example';
-  app.setGlobalPrefix(globalPrefix);
+  const configPrefix = 'status';
 
   const config = new DocumentBuilder()
     .setTitle('Example Service')
@@ -31,8 +30,8 @@ async function bootstrap() {
     .addTag('example')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(`/${globalPrefix}/docs`, app, document);
-  app.use(swStats.getMiddleware({swaggerSpec: (document), uriPath: `/${globalPrefix}/stats` }));
+  SwaggerModule.setup(`/${configPrefix}/docs`, app, document);
+  app.use(swStats.getMiddleware({swaggerSpec: (document), uriPath: `/${configPrefix}/stats` }));
 
 
   const configService = app.get(ConfigService);
@@ -41,7 +40,7 @@ async function bootstrap() {
   ApplicationReadiness.getInstance().isReady = true;
 
   const url = await app.getUrl();
-  Logger.log(`🚀 Application is running on port: ${url}/${globalPrefix}`);
+  Logger.log(`🚀 Application is running on port: ${url}`);
 
 }
 

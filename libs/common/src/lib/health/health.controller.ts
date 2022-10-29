@@ -15,8 +15,9 @@ export class HealthController {
   @HealthCheck()
   check() {
     const config : IHealthConfig = this.healthService.getConfig();
+    const path: string = config?.routePath ?? "";
     return this.health.check([
-      () => this.http.pingCheck('api', `http://${config.host}:${config.port}/${config?.routePath}`),
+      () => this.http.pingCheck('api', `http://${config.host}:${config.port}/${path}`),
     ]);
   }
 }

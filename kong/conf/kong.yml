@@ -1,0 +1,23 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+  - name: core-service
+    url: http://core-service:3000
+    routes:
+      - name: core-service
+        paths:
+          - /core
+  - name: example-service
+    url: http://example-service:3333
+    routes:
+      - name: example-service
+        paths:
+          - /example
+
+plugins:
+  - name: rate-limiting
+    service: core-service
+    config:
+      minute: 6 # The number of HTTP requests that can be made per minute
+      policy: local
