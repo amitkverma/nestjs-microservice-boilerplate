@@ -7,9 +7,7 @@ type CommonOptions = {
     health: IHealthConfig;
 }
 
-@Module({
-  imports: [ReadinessModule]
-})
+@Module({})
 export class CommonModule {
   static register(options: CommonOptions): DynamicModule {
     return {
