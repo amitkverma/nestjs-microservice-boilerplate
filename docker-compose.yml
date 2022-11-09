@@ -82,3 +82,45 @@ services:
       - "8001:8001"
     networks:
       - spotlyt
+
+  postgres:
+    container_name: postgres_db
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/data/postgres
+       - ./docker/postgres/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - spotlyt
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@spotlyt.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+       - ./docker/postgres/docker_pgadmin_servers.json:/pgadmin4/servers.json
+
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    entrypoint:
+      - "/bin/sh"
+      - "-c"
+      - "/bin/echo 'postgres:5432:*:postgres:password' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
+    networks:
+      - spotlyt
+    restart: unless-stopped
+
+volumes:
+    postgres:
+    pgadmin:

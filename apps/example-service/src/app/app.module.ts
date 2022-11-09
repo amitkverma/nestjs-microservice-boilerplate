@@ -6,6 +6,8 @@ import { CoreConfig } from '@spotlyt-backend/config';
 import { ConfigModule } from './config/config.module';
 import { CommonModule } from '@spotlyt-backend/common';
 import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
+import { UserModule } from './user/user.module';
+import { PrismaService } from './prisma.service';
 
 const health_config: IHealthConfig = {
   host: 'localhost',
@@ -13,7 +15,7 @@ const health_config: IHealthConfig = {
 }
 
 @Module({
-  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config })],
+  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
