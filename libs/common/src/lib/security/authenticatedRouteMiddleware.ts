@@ -2,6 +2,8 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
 import { JWT_SECRATE, ACCESS_TOKEN } from '@spotlyt-backend/data/constants';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { IJwtTokenData } from '@spotlyt-backend/data/interfaces';
+
 
 export const Authenticate = createParamDecorator(
     (roles: unknown, ctx: ExecutionContext) => {
@@ -17,9 +19,10 @@ export const Authenticate = createParamDecorator(
 
         try {
             const payload = verify(token, JWT_SECRATE);
-            if ((payload as any)?.data?.type !== ACCESS_TOKEN) {
+            if ((payload as IJwtTokenData)?.data?.type !== ACCESS_TOKEN) {
                 throw new HttpException('Access Token Needed', HttpStatus.UNPROCESSABLE_ENTITY);
             }
+            return (payload as IJwtTokenData)?.data
             // check if roles[] has roles in payload role
         } catch (err: unknown) {
             throw new HttpException((err as Error).message, HttpStatus.UNAUTHORIZED);

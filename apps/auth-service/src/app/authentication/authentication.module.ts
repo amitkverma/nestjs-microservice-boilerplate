@@ -13,7 +13,6 @@ import { PassportModule } from "@nestjs/passport"
       secret: JWT_SECRATE,
       signOptions: {
         algorithm: JWT_ALGO,
-
       }
     })
   ],

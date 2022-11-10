@@ -5,6 +5,8 @@ import { ResponseEntity, UserEntity, IApiResponse, LoginEntity } from './../../e
 import { AuthService } from './auth.service';
 import { Authenticate } from '@spotlyt-backend/common'
 import { Request } from 'express';
+import { IJwtTokenData } from '@spotlyt-backend/data/interfaces';
+
 
 
 
@@ -73,7 +75,9 @@ export class AuthController {
     @Get('play')
     @ApiBearerAuth('jwt')
     @ApiCreatedResponse({ type: ResponseEntity<{ message: string }> })
-    async play(@Authenticate(['ROLE_1', 'ROLE_2']) jwtToken: unknown): Promise<IApiResponse<{ message: string }>> {
+    async play(@Authenticate(['ROLE_1', 'ROLE_2']) currentUser: IJwtTokenData): Promise<IApiResponse<{ message: string }>> {
+        console.log("Current User: ", currentUser);
+        
         return {
             apiMeta: {
                 message: 'Successful',

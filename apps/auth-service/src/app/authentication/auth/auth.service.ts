@@ -3,6 +3,9 @@ import { PrismaService } from '../../prisma.service';
 import { User, Prisma } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+
+import { IJwtTokenData } from '@spotlyt-backend/data/interfaces'
+
 import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN } from '@spotlyt-backend/data/constants';
 @Injectable()
 export class AuthService {
@@ -49,18 +52,18 @@ export class AuthService {
         throw new HttpException('Invalid User', HttpStatus.NOT_FOUND);
     }
 
-    async refresh(refreshToken: string){
-        try{
-            const payload: any = await this.jwtService.verifyAsync(refreshToken);
-            if(payload?.data?.type === REFRESH_TOKEN){
-                return this.getTokens({email: payload?.data?.email, id: payload?.data?.id});
+    async refresh(refreshToken: string) {
+        try {
+            const payload: IJwtTokenData = await this.jwtService.verifyAsync(refreshToken);
+            if (payload?.data?.type === REFRESH_TOKEN) {
+                return this.getTokens({ email: payload?.data?.email, id: payload?.data?.id });
             }
             throw new UnauthorizedException('Invalid Refresh Token');
-        }catch(err: unknown){
-            console.log(err);   
+        } catch (err: unknown) {
+            console.log(err);
             throw new UnauthorizedException((err as Error).message);
         }
-        
+
     }
 
     async getTokens({ email, id }: { email: string, id: number }) {
