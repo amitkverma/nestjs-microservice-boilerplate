@@ -4,7 +4,6 @@ import { User, Prisma } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN } from '@spotlyt-backend/data/constants';
-
 @Injectable()
 export class AuthService {
     constructor(private prisma: PrismaService, private jwtService: JwtService) { }
@@ -50,13 +49,30 @@ export class AuthService {
         throw new HttpException('Invalid User', HttpStatus.NOT_FOUND);
     }
 
+    async refresh(refreshToken: string){
+        try{
+            const payload: any = await this.jwtService.verifyAsync(refreshToken);
+            if(payload?.data?.type === REFRESH_TOKEN){
+                return this.getTokens({email: payload?.data?.email, id: payload?.data?.id});
+            }
+            throw new UnauthorizedException('Invalid Refresh Token');
+        }catch(err: unknown){
+            console.log(err);   
+            throw new UnauthorizedException((err as Error).message);
+        }
+        
+    }
+
     async getTokens({ email, id }: { email: string, id: number }) {
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(
                 {
                     sub: id,
-                    email: email,
-                    type: ACCESS_TOKEN
+                    data: {
+                        email: email,
+                        type: ACCESS_TOKEN,
+                        id: id
+                    }
                 },
                 {
                     secret: JWT_SECRATE,
@@ -66,8 +82,11 @@ export class AuthService {
             this.jwtService.signAsync(
                 {
                     sub: id,
-                    email: email,
-                    type: REFRESH_TOKEN
+                    data: {
+                        email: email,
+                        type: REFRESH_TOKEN,
+                        id: id
+                    }
                 },
                 {
                     secret: JWT_SECRATE,

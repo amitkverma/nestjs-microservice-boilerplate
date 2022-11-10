@@ -3,12 +3,19 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from '../prisma.service';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthenticatedRouteMiddleware } from '@spotlyt-backend/common';
-
+import {JWT_ALGO, JWT_SECRATE} from '@spotlyt-backend/data/constants'
+import { PassportModule } from "@nestjs/passport"
 
 @Module({
   imports: [
-    JwtModule.register({})
+    PassportModule,
+    JwtModule.register({
+      secret: JWT_SECRATE,
+      signOptions: {
+        algorithm: JWT_ALGO,
+
+      }
+    })
   ],
   controllers: [AuthController],
   providers: [AuthService, PrismaService]

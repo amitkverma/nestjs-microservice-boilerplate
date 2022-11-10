@@ -9,7 +9,7 @@ export const Authenticate = createParamDecorator(
         const authHeader = request.header('authorization');
 
         if (!authHeader) {
-            throw new HttpException('No auth token', HttpStatus.UNAUTHORIZED);
+            throw new HttpException('Auth Token Needed [authorixation: Bearer auth-token]', HttpStatus.UNAUTHORIZED);
         }
 
         const bearerToken: string[] = authHeader.split(' ');
@@ -17,7 +17,7 @@ export const Authenticate = createParamDecorator(
 
         try {
             const payload = verify(token, JWT_SECRATE);
-            if ((payload as any).type !== ACCESS_TOKEN) {
+            if ((payload as any)?.data?.type !== ACCESS_TOKEN) {
                 throw new HttpException('Access Token Needed', HttpStatus.UNPROCESSABLE_ENTITY);
             }
             // check if roles[] has roles in payload role

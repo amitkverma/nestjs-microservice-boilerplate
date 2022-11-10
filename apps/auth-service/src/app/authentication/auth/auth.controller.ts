@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateUserDto, SignInDto } from './../../dtos';
 import { ResponseEntity, UserEntity, IApiResponse, LoginEntity } from './../../entities';
 import { AuthService } from './auth.service';
 import { Authenticate } from '@spotlyt-backend/common'
-
+import { Request } from 'express';
 
 
 
@@ -49,11 +49,29 @@ export class AuthController {
         }
     }
 
+    @Get('refresh')
+    @ApiOkResponse({ type: ResponseEntity<LoginEntity> })
+    async refresh(@Req() req: Request): Promise<IApiResponse<any>> {
+        const token = req.header('authorization')
+        if (!token) {
+            throw new HttpException('Refresh Token Needed', HttpStatus.FORBIDDEN);
+        }
+
+        const tokens = await this.authService.refresh(token.split(' ')[1]);
+
+        return {
+            apiMeta: {
+                message: 'refresh sucessful',
+                status: HttpStatus.OK,
+            },
+            data: tokens
+        }
+    }
+
 
 
     @Get('play')
     @ApiBearerAuth('jwt')
-
     @ApiCreatedResponse({ type: ResponseEntity<{ message: string }> })
     async play(@Authenticate(['ROLE_1', 'ROLE_2']) jwtToken: unknown): Promise<IApiResponse<{ message: string }>> {
         return {
