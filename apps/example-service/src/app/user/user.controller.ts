@@ -15,7 +15,7 @@ export class UserController {
 
     @Post()
     async signupUser(
-      @Body() userData: { name?: string; email: string },
+      @Body() userData: { name?: string; email: string, password: string },
     ): Promise<User> {
       return this.userService.createUser(userData);
     }
