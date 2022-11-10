@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 class ApiMeta {
-    @ApiProperty()
+    @ApiProperty({ minimum: 100, maximum: 599 })
     status: number
 
     @ApiProperty()
@@ -16,7 +16,7 @@ export class ResponseEntity<T> {
     data: T
 }
 
-export interface IApiResponse<T>{
+export interface IApiResponse<T> {
     apiMeta: {
         status: number,
         message: string

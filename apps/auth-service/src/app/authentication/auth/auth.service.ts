@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma.service';
 import { User, Prisma } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN } from '@spotlyt-backend/data/constants';
 
 @Injectable()
 export class AuthService {
@@ -43,33 +44,33 @@ export class AuthService {
         if (!user) { throw new HttpException('Invalid User', HttpStatus.NOT_FOUND) }
         const verificationStatus = await compare(password, user.password);
         if (verificationStatus) {
-            return this.getTokens(user)
+            return this.getTokens({ email: user.email, id: user.id })
         }
 
         throw new HttpException('Invalid User', HttpStatus.NOT_FOUND);
     }
 
-    async getTokens(user: User) {
+    async getTokens({ email, id }: { email: string, id: number }) {
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(
                 {
-                    sub: user.id,
-                    email: user.email,
-                    type: 'access_token'
+                    sub: id,
+                    email: email,
+                    type: ACCESS_TOKEN
                 },
                 {
-                    secret: 'LLLKKK2',
-                    expiresIn: '15m',
+                    secret: JWT_SECRATE,
+                    expiresIn: JWT_EXPIRE_TIME,
                 },
             ),
             this.jwtService.signAsync(
                 {
-                    sub: user.id,
-                    email: user.email,
-                    type: 'refresh_token'
+                    sub: id,
+                    email: email,
+                    type: REFRESH_TOKEN
                 },
                 {
-                    secret: 'LLLKKK2',
+                    secret: JWT_SECRATE,
                     expiresIn: '7d',
                 },
             ),

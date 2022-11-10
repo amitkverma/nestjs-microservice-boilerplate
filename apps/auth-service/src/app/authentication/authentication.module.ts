@@ -1,16 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from '../prisma.service';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthenticatedRouteMiddleware } from '@spotlyt-backend/common';
+
 
 @Module({
-  controllers: [AuthController],
   imports: [
-    JwtModule.register({
-      signOptions: { expiresIn: '1h' },
-    })
+    JwtModule.register({})
   ],
+  controllers: [AuthController],
   providers: [AuthService, PrismaService]
 })
-export class AuthenticationModule { }
+export class AuthenticationModule {}

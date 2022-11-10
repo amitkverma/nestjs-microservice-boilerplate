@@ -24,4 +24,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   password: string;
+
+
+
+
+    //   rolesId 
+    //  companyId
 }

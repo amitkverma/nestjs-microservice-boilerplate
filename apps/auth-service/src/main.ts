@@ -19,6 +19,10 @@ async function bootstrap() {
     .setTitle('Auth Module')
     .setDescription('User Signup and User Login')
     .setVersion('0.2')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'jwt',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(globalPrefix, app, document);
