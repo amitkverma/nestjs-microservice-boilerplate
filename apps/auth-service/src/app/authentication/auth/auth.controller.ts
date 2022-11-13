@@ -20,19 +20,18 @@ export class AuthController {
 
     @Post('signup')
     @ApiCreatedResponse({ type: ResponseEntity<UserEntity> })
-    async signup(@Body() createUserDto: CreateUserDto): Promise<IApiResponse<AuthTokens>> {
+    async signup(@Body() createUserDto: CreateUserDto): Promise<IApiResponse<null>> {
         if (await this.authService.checkEmailExsists(createUserDto.email)) {
             throw new HttpException('User Already Exsists', HttpStatus.CONFLICT);
         }
-        const user = await this.authService.userSignUp(createUserDto)
+        await this.authService.userSignUp(createUserDto)
 
-        const tokens = await this.authService.login(user.email, createUserDto.password);
         return {
             apiMeta: {
                 message: 'User Created',
                 status: HttpStatus.CREATED
             },
-            data: tokens
+            data: null
         }
     }
 

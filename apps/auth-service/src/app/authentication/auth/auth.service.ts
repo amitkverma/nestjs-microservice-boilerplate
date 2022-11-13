@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma, UserTenant, Status } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -11,13 +11,11 @@ import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN } from '@spot
 export class AuthService {
     constructor(private prisma: PrismaService, private jwtService: JwtService) { }
 
-    async userSignUp(data: Prisma.UserCreateInput): Promise<Omit<User, "password">> {
+    async userSignUp(data: Prisma.UserCreateInput) {
         return this.prisma.user.create({
             data: { ...data, password: await hash(data.password, 10) },
             select: {
-                email: true,
-                id: true,
-                name: true
+                password: false
             }
         })
     }
@@ -26,7 +24,10 @@ export class AuthService {
         return this.prisma.user.findFirst({
             where: {
                 email: email
-            }
+            },
+            // include: {
+            //     userTenant: true
+            // }
         })
     }
 
