@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CommonModule } from '@spotlyt-backend/common';
 import { CoreConfig } from '@spotlyt-backend/config';
 import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
+import { PrismaModule } from '@spotlyt-backend/database';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -15,7 +16,10 @@ const health_config = {
 } as IHealthConfig;
 
 @Module({
-  imports: [CoreConfig, CommonModule.register({ health: health_config }) ,AuthenticationModule, RolesModule, TenantModule],
+  imports: [CoreConfig, 
+    CommonModule.register({ health: health_config }),
+    PrismaModule,
+    TenantModule],
   controllers: [AppController],
   providers: [AppService],
 })
