@@ -14,7 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = '/';
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({transform: true}));
   const config = new DocumentBuilder()
     .setTitle('Auth Module')
     .setDescription('User Signup and User Login')
