@@ -41,3 +41,5 @@ Thumbs.db
 # logs
 logs/*
 logs/.gitkeep
+apps/**/logs
+libs/**/logs
