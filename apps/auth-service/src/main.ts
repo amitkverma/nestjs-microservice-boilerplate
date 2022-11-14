@@ -1,40 +1,52 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-
-import { AppModule } from './app/app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = '/';
-
-  app.useGlobalPipes(new ValidationPipe({transform: true}));
-  const config = new DocumentBuilder()
-    .setTitle('Auth Module')
-    .setDescription('User Signup and User Login')
-    .setVersion('0.2')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'jwt',
-    )
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(globalPrefix, app, document);
+ import { Logger } from '@nestjs/common';
+ import { ConfigService } from '@nestjs/config';
+ import { NestFactory } from '@nestjs/core';
+ import { initWinston } from '@spotlyt-backend/common';
+ import { AppModule } from './app/app.module';
+ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+ import * as swStats from 'swagger-stats';
+ import { ApplicationReadiness, secureApplication } from '@spotlyt-backend/common';
+ import { AUTHENTICATION_FORMAT, AUTHENTICATION_SCHEME } from '@spotlyt-backend/data/constants';
+ 
+ async function bootstrap() {
+   const app_name = "auth_service";
+ 
+   const app = await NestFactory.create(AppModule, {
+     logger: initWinston(app_name)
+   });
+ 
+   secureApplication(app);
   
-  app.setGlobalPrefix(globalPrefix);
-  // const port = process.env.PORT || 3333;
-  const port = 6677;
-  console.log("Running on port: ", 6677);
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
-}
+   const configPrefix = 'status';
+ 
+   const configService = app.get(ConfigService);
 
-bootstrap();
+   const config = new DocumentBuilder()
+     .setTitle('Auth Service')
+     .setDescription('Authentication and Authorization service API description')
+     .setVersion('1.0')
+     .addTag('auth')
+     .addBearerAuth(
+      { type: 'http', scheme: AUTHENTICATION_SCHEME, bearerFormat: AUTHENTICATION_FORMAT },
+      'jwt',
+     )
+     .build();
+   const document = SwaggerModule.createDocument(app, config);
+   SwaggerModule.setup(`/${configPrefix}/docs`, app, document);
+   app.use(swStats.getMiddleware({swaggerSpec: (document), uriPath: `/${configPrefix}/stats` }));
+ 
+ 
+   const port = configService.get<number>('AUTH_SERVICE_PORT', 7001);
+   await app.listen(port);
+   ApplicationReadiness.getInstance().isReady = true;
+ 
+   const url = await app.getUrl();
+   Logger.log(`🚀 Application is running on port: ${url}`);
+ 
+ }
+ 
+ (async (): Promise<void> => {
+   await bootstrap();
+ })().catch((error: Error) => {
+   Logger.error(`Nest application error: ${error.message}`);
+ });
