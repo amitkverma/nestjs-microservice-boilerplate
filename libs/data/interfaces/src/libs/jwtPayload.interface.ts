@@ -1,7 +1,20 @@
 export interface IJwtTokenData{
-    data: {
-        email: string,
+    data: IGenerateJWTPayload & {
         type: string,
         id: number
     }
+}
+
+
+export interface IGenerateJWTPayload {
+    email: string,
+    firstName: string,
+    lastName: string,
+    permission: string[],
+    roleName: string,
+    status: string,
+    tenantName: string,
+    roleId: number,
+    tenantId: number,
+    userId: number
 }

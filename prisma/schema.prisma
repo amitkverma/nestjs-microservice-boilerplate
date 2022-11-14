@@ -97,10 +97,10 @@ model UserTenant {
   userId Int @unique
 
   tenant Tenant @relation(fields: [tenantId], references: [id])
-  tenantId Int @unique
+  tenantId Int 
 
   role Role @relation(fields: [roleId], references: [id])
-  roleId Int @unique
+  roleId Int 
 
 
   // ======== COMMOM COLUMN ======= //

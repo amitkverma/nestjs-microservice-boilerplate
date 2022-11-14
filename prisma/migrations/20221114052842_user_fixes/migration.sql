@@ -90,12 +90,6 @@ CREATE TABLE "UserTenant" (
 -- CreateIndex
 CREATE UNIQUE INDEX "UserTenant_userId_key" ON "UserTenant"("userId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "UserTenant_tenantId_key" ON "UserTenant"("tenantId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "UserTenant_roleId_key" ON "UserTenant"("roleId");
-
 -- AddForeignKey
 ALTER TABLE "UserTenant" ADD CONSTRAINT "UserTenant_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 

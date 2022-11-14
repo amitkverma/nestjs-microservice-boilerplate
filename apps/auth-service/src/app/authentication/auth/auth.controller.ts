@@ -1,11 +1,12 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateUserDto, SignInDto } from './../../dtos';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Req } from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { CreateUserDto, SignInDto, UserStatusChangeDto } from './../../dtos';
 import { ResponseEntity, UserEntity, IApiResponse, LoginEntity } from './../../entities';
 import { AuthService } from './auth.service';
 import { Authenticate } from '@spotlyt-backend/common'
 import { Request } from 'express';
 import { IJwtTokenData } from '@spotlyt-backend/data/interfaces';
+import { User } from '@prisma/client';
 
 
 
@@ -18,20 +19,41 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
 
+    @Patch('change-user-status')
+    @ApiCreatedResponse({ type: ResponseEntity<null> })
+    @ApiParam({
+        name: 'userId',
+        required: true,
+        description: 'User Id',
+        type: Number
+    })
+    async changeUserStatus(@Body() userStatus: UserStatusChangeDto): Promise<IApiResponse<null>> {
+
+        await this.authService.userStatusChange(userStatus)
+        return {
+            apiMeta: {
+                message: 'Status Changed Successfully',
+                status: 200
+            },
+            data: null
+        }
+
+    }
+
     @Post('signup')
     @ApiCreatedResponse({ type: ResponseEntity<UserEntity> })
-    async signup(@Body() createUserDto: CreateUserDto): Promise<IApiResponse<null>> {
-        if (await this.authService.checkEmailExsists(createUserDto.email)) {
+    async signup(@Body() userData: CreateUserDto): Promise<IApiResponse<Omit<User, 'password'>>> {
+        if (await this.authService.checkEmailExsists(userData.email)) {
             throw new HttpException('User Already Exsists', HttpStatus.CONFLICT);
         }
-        await this.authService.userSignUp(createUserDto)
+        const { password, ...user } = await this.authService.userSignUp(userData)
 
         return {
             apiMeta: {
                 message: 'User Created',
                 status: HttpStatus.CREATED
             },
-            data: null
+            data: user
         }
     }
 
@@ -70,13 +92,13 @@ export class AuthController {
     }
 
 
-
+    // ============ Playground ============= //
     @Get('play')
     @ApiBearerAuth('jwt')
     @ApiCreatedResponse({ type: ResponseEntity<{ message: string }> })
     async play(@Authenticate(['ROLE_1', 'ROLE_2']) currentUser: IJwtTokenData): Promise<IApiResponse<{ message: string }>> {
         console.log("Current User: ", currentUser);
-        
+
         return {
             apiMeta: {
                 message: 'Successful',

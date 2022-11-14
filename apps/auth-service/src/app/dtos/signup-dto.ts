@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -72,8 +73,19 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @IsEnum(Gender)
-  @ApiProperty()
+  @ApiProperty({enum: Gender})
   gender: Gender;
+
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  roleId: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  tenantId: number;
 
 
 
