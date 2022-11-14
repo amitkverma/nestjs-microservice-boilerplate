@@ -3,20 +3,105 @@ import { PrismaService } from '../../prisma.service';
 import { Prisma, Status } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtTokenData, IGenerateJWTPayload } from '@spotlyt-backend/data/interfaces'
-import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN } from '@spotlyt-backend/data/constants';
-import { UserStatusChangeDto, ResetPasswordDto } from '../../dtos';
+import { IJwtTokenData, IGenerateJWTPayload, IVerificationToken } from '@spotlyt-backend/data/interfaces'
+import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN, ACTIVATION_TOKEN, FORGET_TOKEN } from '@spotlyt-backend/data/constants';
+import { UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto } from '../../dtos';
 
 @Injectable()
 export class AuthService {
     constructor(private prisma: PrismaService, private jwtService: JwtService) { }
 
-    async resetPassword(restPasswordPayload: ResetPasswordDto){
+
+    async changePassword(email: string, password: string){
+        const user = await this.checkEmailExsists(email);
+        if (!user) { throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND) }
+
+        await this.prisma.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                password: await hash(password, 10)
+            }
+        })
+    }
+
+    async forgetPassword(token: string, newPassword: string){
+        try {
+            const payload: IVerificationToken = await this.jwtService.verifyAsync(token);
+            if (payload.data.type === FORGET_TOKEN) {
+                await this.changePassword(payload.data.email, newPassword)
+            }
+        } catch (err: unknown) {
+            throw new HttpException((err as Error).message, HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+
+    async activateUser(token: string) {
+        try {
+            const payload: IVerificationToken = await this.jwtService.verifyAsync(token);
+            if (payload.data.type === ACTIVATION_TOKEN) {
+                await this.userStatusChange({ email: payload.data.email, status: Status.Active });
+            }
+
+        } catch (err: unknown) {
+            throw new HttpException((err as Error).message, HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+
+    async generateVerificationToken(email: string, tokenType: string) {
+        if (!(tokenType == ACTIVATION_TOKEN || tokenType == FORGET_TOKEN)) {
+            throw new HttpException(`"FORGET_TOKEN", "ACTIVATION_TOKEN" only allowed`, HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        const user = await this.checkEmailExsists(email);
+        if (!user) { throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND) }
+
+        const token = await this.jwtService.signAsync(
+            {
+                sub: user.id,
+                data: {
+                    type: tokenType,
+                    id: user.id,
+                    email: user.email
+                }
+            },
+            {
+                secret: JWT_SECRATE,
+                expiresIn: '24h',
+            },
+        )
+        return {
+            token,
+            tokenType
+        }
+    }
+
+    async updateUserRole(roleUpdatePayload: RoleUpdateDto) {
+        const user = await this.checkEmailExsists(roleUpdatePayload.email);
+        if (!user) { throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND) }
+
+        await this.prisma.userTenant.update({
+            where: {
+                userId: user.id
+            },
+            data: {
+                roleId: roleUpdatePayload.roleId
+            }
+        }).catch(async (err: Error) => {
+            throw new HttpException(err.message, HttpStatus.EXPECTATION_FAILED)
+        })
+
+    }
+
+    async resetPassword(restPasswordPayload: ResetPasswordDto) {
         const user = await this.checkEmailExsists(restPasswordPayload.email);
-        if(!user){ throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND)}
+        if (!user) { throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND) }
 
         const verificationStatus = await compare(restPasswordPayload.oldPassword, user.password);
-        if(verificationStatus){
+        if (verificationStatus) {
             await this.prisma.user.update({
                 where: {
                     id: user.id
@@ -30,9 +115,9 @@ export class AuthService {
         throw new HttpException('Invalid Creds Passed', HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    async userStatusChange(newUserStatusPayload: UserStatusChangeDto){
+    async userStatusChange(newUserStatusPayload: UserStatusChangeDto) {
         const user = await this.checkEmailExsists(newUserStatusPayload.email);
-        if(!user){ throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND)}
+        if (!user) { throw new HttpException('User Doesnot exsits', HttpStatus.NOT_FOUND) }
         return this.prisma.userTenant.update({
             where: {
                 userId: user.id
@@ -107,14 +192,14 @@ export class AuthService {
     }
 
     async refresh(refreshToken: string) {
-        try{
+        try {
             const payload: IJwtTokenData = await this.jwtService.verifyAsync(refreshToken);
-            if(payload.data.type === REFRESH_TOKEN){
-                const {type, id, ...userPayloadData} = payload.data;
+            if (payload.data.type === REFRESH_TOKEN) {
+                const { type, id, ...userPayloadData } = payload.data;
                 return this.getTokens(userPayloadData)
             }
             throw new UnauthorizedException('Invalid Refresh Token');
-        }catch(err: unknown){
+        } catch (err: unknown) {
             throw new UnauthorizedException((err as Error).message);
 
         }

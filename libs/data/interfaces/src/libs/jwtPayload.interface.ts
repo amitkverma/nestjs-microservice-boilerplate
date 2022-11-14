@@ -18,3 +18,12 @@ export interface IGenerateJWTPayload {
     tenantId: number,
     userId: number
 }
+
+
+export interface IVerificationToken{
+    data: {
+        type: string,
+        id: number,
+        email: string
+    }
+}

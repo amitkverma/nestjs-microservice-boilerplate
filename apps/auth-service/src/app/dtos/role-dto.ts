@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    IsArray,
-    IsEnum,
+  IsArray,
+  IsEnum,
   IsNotEmpty,
   IsString,
 } from 'class-validator';
 import { RoleType } from '@prisma/client';
 
 export class RoleDto {
-  
+
 
   @IsString()
   @IsNotEmpty()
@@ -18,7 +18,7 @@ export class RoleDto {
 
   @IsNotEmpty()
   @IsEnum(RoleType)
-  @ApiProperty()
+  @ApiProperty({ enum: RoleType })
   roleType: RoleType;
 
 
@@ -26,5 +26,5 @@ export class RoleDto {
   @ApiProperty()
   permissions: string[]
 
-  
+
 }

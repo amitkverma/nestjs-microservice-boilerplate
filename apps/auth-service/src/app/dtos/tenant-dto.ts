@@ -18,7 +18,7 @@ export class TenantDto {
 
   @IsNotEmpty()
   @IsEnum(Status)
-  @ApiProperty()
+  @ApiProperty({enum: Status})
   status: Status;
 
   @IsString()

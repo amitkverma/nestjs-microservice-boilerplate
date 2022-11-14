@@ -9,7 +9,7 @@ import { Status } from '@prisma/client';
 export class UserStatusChangeDto {
     @IsNotEmpty()
     @IsEnum(Status)
-    @ApiProperty({enum: Status, description: `Accepted Value: ${Status}`})
+    @ApiProperty({enum: Status, description: `Accepted Value: ${JSON.stringify(Status)}`})
     status: Status;
 
 
