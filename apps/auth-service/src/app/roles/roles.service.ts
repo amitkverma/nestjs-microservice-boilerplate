@@ -21,10 +21,22 @@ export class RolesService {
         })
     }
 
-    async findAll() {
+    async findAll(params?: {
+        skip?: number;
+        take?: number;
+        cursor?: Prisma.RoleWhereUniqueInput;
+        where?: Prisma.RoleWhereInput;
+        orderBy?: Prisma.RoleOrderByWithRelationInput;
+    }) {
+        const { skip, take, cursor, where, orderBy } = params;
         return this.prisma.role.findMany({
+            skip,
+            take,
+            cursor,
+            where,
             orderBy: {
-                createdAt: 'desc'
+                createdAt: 'desc',
+                ...orderBy
             }
         })
     }

@@ -53,7 +53,7 @@ export class AuthService {
 
     async generateVerificationToken(email: string, tokenType: string) {
         if (!(tokenType == ACTIVATION_TOKEN || tokenType == FORGET_TOKEN)) {
-            throw new HttpException(`"FORGET_TOKEN", "ACTIVATION_TOKEN" only allowed`, HttpStatus.NOT_ACCEPTABLE);
+            throw new HttpException(`"${ACTIVATION_TOKEN}", "${FORGET_TOKEN}" only allowed`, HttpStatus.NOT_ACCEPTABLE);
         }
 
         const user = await this.checkEmailExsists(email);

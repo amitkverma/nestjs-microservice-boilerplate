@@ -20,7 +20,8 @@ const health_config = {
     CommonModule.register({ health: health_config }),
     PrismaModule,
     TenantModule,
-    RolesModule],
+    RolesModule,
+    AuthenticationModule],
   controllers: [AppController],
   providers: [AppService],
 })
