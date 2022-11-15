@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { RolesModule } from './roles/roles.module';
 import { TenantModule } from './tenant/tenant.module';
+import { UsersModule } from './users/users.module';
 
 const health_config = {
   host: process.env.HOST,
@@ -21,7 +22,8 @@ const health_config = {
     PrismaModule,
     TenantModule,
     RolesModule,
-    AuthenticationModule],
+    AuthenticationModule,
+    UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

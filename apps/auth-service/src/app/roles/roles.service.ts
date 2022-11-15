@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Prisma } from '@prisma/client';
-import { UpdateRoleDto } from './dtos';
+import { UpdateRoleDto } from './dto';
 
 @Injectable()
 export class RolesService {
@@ -28,15 +28,9 @@ export class RolesService {
         where?: Prisma.RoleWhereInput;
         orderBy?: Prisma.RoleOrderByWithRelationInput;
     }) {
-        const { skip, take, cursor, where, orderBy } = params;
         return this.prisma.role.findMany({
-            skip,
-            take,
-            cursor,
-            where,
             orderBy: {
                 createdAt: 'desc',
-                ...orderBy
             }
         })
     }

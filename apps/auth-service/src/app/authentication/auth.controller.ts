@@ -1,13 +1,10 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiTags, ApiParam } from '@nestjs/swagger';
-import { CreateUserDto, SignInDto, UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto, ForgetPasswordDto } from './dtos';
+import { CreateUserDto, SignInDto, UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto, ForgetPasswordDto } from './dto';
 import { AuthService } from './auth.service';
 import { Authenticate } from '@spotlyt-backend/common'
 import { Request } from 'express';
 
-
-
-type AuthTokens = { accessToken: string, refreshToken: string };
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {

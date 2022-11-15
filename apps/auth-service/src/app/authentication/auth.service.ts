@@ -5,7 +5,7 @@ import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtTokenData, IGenerateJWTPayload, IVerificationToken } from '@spotlyt-backend/data/interfaces'
 import { JWT_EXPIRE_TIME, JWT_SECRATE, ACCESS_TOKEN, REFRESH_TOKEN, ACTIVATION_TOKEN, FORGET_TOKEN } from '@spotlyt-backend/data/constants';
-import { UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto } from './dtos';
+import { UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto } from './dto';
 
 @Injectable()
 export class AuthService {
