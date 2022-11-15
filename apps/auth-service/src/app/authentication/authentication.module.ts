@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import {JWT_ALGO, JWT_SECRATE} from '@spotlyt-backend/data/constants'

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
-import { CreateUserDto, SignInDto, UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto, ForgetPasswordDto } from './../../dtos';
-import { ResponseEntity, UserEntity, IApiResponse, LoginEntity } from './../../entities';
+import { CreateUserDto, SignInDto, UserStatusChangeDto, ResetPasswordDto, RoleUpdateDto, ForgetPasswordDto } from './dtos';
+import { ResponseEntity, UserEntity, IApiResponse, LoginEntity } from '../entities';
 import { AuthService } from './auth.service';
 import { Authenticate } from '@spotlyt-backend/common'
 import { Request } from 'express';
@@ -20,7 +20,6 @@ export class AuthController {
 
 
     @Patch('change-password/:email')
-    @ApiCreatedResponse({ type: ResponseEntity<null> })
     async changePassword(@Param('email') email: string, @Body() forgetPasswordPayload: ForgetPasswordDto): Promise<IApiResponse<null>> {
         await this.authService.changePassword(email, forgetPasswordPayload.newPassword)
         return {

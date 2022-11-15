@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { RoleType } from '@prisma/client';
 
-export class RoleDto {
+export class CreateRoleDto {
 
 
   @IsString()

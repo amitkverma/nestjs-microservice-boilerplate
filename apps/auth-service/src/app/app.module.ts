@@ -19,7 +19,8 @@ const health_config = {
   imports: [CoreConfig, 
     CommonModule.register({ health: health_config }),
     PrismaModule,
-    TenantModule],
+    TenantModule,
+    RolesModule],
   controllers: [AppController],
   providers: [AppService],
 })
