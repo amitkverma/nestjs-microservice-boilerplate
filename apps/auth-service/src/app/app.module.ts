@@ -6,10 +6,10 @@ import { PrismaModule } from '@spotlyt-backend/database';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthenticationModule } from './authentication/authentication.module';
-import { RolesModule } from './roles/roles.module';
 import { TenantModule } from './tenant/tenant.module';
-import { UsersModule } from './users/users.module';
+import { RoleModule } from './role/role.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 const health_config = {
   host: process.env.HOST,
@@ -21,9 +21,10 @@ const health_config = {
     CommonModule.register({ health: health_config }),
     PrismaModule,
     TenantModule,
-    RolesModule,
-    AuthenticationModule,
-    UsersModule],
+    RoleModule,
+    AuthModule,
+    UserModule,
+    ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,35 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@spotlyt-backend/database';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 
 @Injectable()
 export class TenantService {
-
-  constructor(private prismaService: PrismaService) {}
-
   create(createTenantDto: CreateTenantDto) {
-    return this.prismaService.tenant.create({
-      data: createTenantDto
-    });
+    return 'This action adds a new tenant';
   }
 
   findAll() {
-    return this.prismaService.tenant.findMany();
+    return `This action returns all tenant`;
   }
 
   findOne(id: number) {
-    return this.prismaService.tenant.findUnique({ where: { id: id } });
+    return `This action returns a #${id} tenant`;
   }
 
   update(id: number, updateTenantDto: UpdateTenantDto) {
-    return this.prismaService.tenant.update({
-      where: { id: id },
-      data: updateTenantDto
-    });
+    return `This action updates a #${id} tenant`;
   }
 
   remove(id: number) {
-    return this.prismaService.tenant.delete({ where: { id: id } });
+    return `This action removes a #${id} tenant`;
   }
 }
