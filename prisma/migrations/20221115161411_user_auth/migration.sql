@@ -6,6 +6,7 @@
   - You are about to alter the column `email` on the `User` table. The data in that column could be lost. The data in that column will be cast from `Text` to `VarChar(60)`.
   - Added the required column `employeeId` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `firstName` to the `User` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `isDeleted` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `modifiedOn` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `password` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `photoUrl` to the `User` table without a default value. This is not possible if the table is not empty.
@@ -31,6 +32,7 @@ ADD COLUMN     "deletedBy" TEXT,
 ADD COLUMN     "deletedOn" TIMESTAMP(3),
 ADD COLUMN     "employeeId" VARCHAR(255) NOT NULL,
 ADD COLUMN     "firstName" VARCHAR(255) NOT NULL,
+ADD COLUMN     "isDeleted" BOOLEAN NOT NULL,
 ADD COLUMN     "lastLoggedIn" TIMESTAMP(3),
 ADD COLUMN     "lastName" VARCHAR(255),
 ADD COLUMN     "middleName" VARCHAR(255),

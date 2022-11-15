@@ -97,6 +97,7 @@ model User {
 
   deletedBy String?
   deletedOn DateTime?
+  isDeleted Boolean
   // =========== COMMON ========== //
 
 
