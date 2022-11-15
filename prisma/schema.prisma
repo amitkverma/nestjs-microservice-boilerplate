@@ -27,11 +27,11 @@ model AuthClients{
   id      String  @id @default(uuid())
   name    String  @db.VarChar(255)
   secrate String  @db.VarChar(255)
-  accessTokenExpiration DateTime
-  refreshTokenExpiration DateTime
+  accessTokenExpiration String @db.VarChar(10)
+  refreshTokenExpiration String @db.VarChar(10)
 
   createdOn  DateTime @default(now())
-  modifiedBy String?
+  modifiedBy String? @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
 
@@ -51,7 +51,7 @@ model Tenant {
   zip     String? @db.VarChar(255)
 
   createdOn  DateTime @default(now())
-  modifiedBy String?
+  modifiedBy String? @db.VarChar(60)
   modifiedOn DateTime @updatedAt
   
   users User[]
@@ -64,7 +64,7 @@ model Role {
   description String?
 
   createdOn  DateTime @default(now())
-  modifiedBy String?
+  modifiedBy String? @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
   users User[]
@@ -92,7 +92,7 @@ model User {
   createdBy String?
   createdOn DateTime @default(now())
 
-  modifiedBy String?
+  modifiedBy String? @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
   deletedBy String?

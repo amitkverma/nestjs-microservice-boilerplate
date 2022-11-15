@@ -34,7 +34,7 @@ ADD COLUMN     "firstName" VARCHAR(255) NOT NULL,
 ADD COLUMN     "lastLoggedIn" TIMESTAMP(3),
 ADD COLUMN     "lastName" VARCHAR(255),
 ADD COLUMN     "middleName" VARCHAR(255),
-ADD COLUMN     "modifiedBy" TEXT,
+ADD COLUMN     "modifiedBy" VARCHAR(60),
 ADD COLUMN     "modifiedOn" TIMESTAMP(3) NOT NULL,
 ADD COLUMN     "password" VARCHAR(255) NOT NULL,
 ADD COLUMN     "phone" VARCHAR(60),
@@ -57,10 +57,10 @@ CREATE TABLE "AuthClients" (
     "id" TEXT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
     "secrate" VARCHAR(255) NOT NULL,
-    "accessTokenExpiration" TIMESTAMP(3) NOT NULL,
-    "refreshTokenExpiration" TIMESTAMP(3) NOT NULL,
+    "accessTokenExpiration" VARCHAR(10) NOT NULL,
+    "refreshTokenExpiration" VARCHAR(10) NOT NULL,
     "createdOn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "modifiedBy" TEXT,
+    "modifiedBy" VARCHAR(60),
     "modifiedOn" TIMESTAMP(3) NOT NULL,
     "tenantId" TEXT NOT NULL,
 
@@ -79,7 +79,7 @@ CREATE TABLE "Tenant" (
     "state" VARCHAR(255),
     "zip" VARCHAR(255),
     "createdOn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "modifiedBy" TEXT,
+    "modifiedBy" VARCHAR(60),
     "modifiedOn" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Tenant_pkey" PRIMARY KEY ("id")
@@ -91,7 +91,7 @@ CREATE TABLE "Role" (
     "name" VARCHAR(255) NOT NULL,
     "description" TEXT,
     "createdOn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "modifiedBy" TEXT,
+    "modifiedBy" VARCHAR(60),
     "modifiedOn" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
