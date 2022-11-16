@@ -55,7 +55,7 @@ model Tenant {
   modifiedOn DateTime @updatedAt
   
   users User[]
-  authId AuthClients?
+  auth AuthClients?
 }
 
 model Role {

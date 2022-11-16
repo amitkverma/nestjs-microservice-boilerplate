@@ -83,6 +83,6 @@ export class CreateTenantDto {
 
     @IsObject()
     @ApiProperty({ type: AuthClientDto })
-    authClient: AuthClientDto
+    auth: AuthClientDto
 }
 

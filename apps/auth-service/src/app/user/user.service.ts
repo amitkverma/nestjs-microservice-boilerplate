@@ -6,8 +6,36 @@ import { Prisma, UserStatus } from '@prisma/client';
 import { hash } from 'bcrypt';
 @Injectable()
 export class UserService {
-
-  constructor(private prisma: PrismaService) { }
+  private userFeilds: Prisma.UserSelect;
+  private roleFeilds: Prisma.RoleSelect;
+  private tenantFeilds: Prisma.TenantSelect;
+  constructor(private prisma: PrismaService) {
+    this.userFeilds = {
+      email: true,
+      lastLoggedIn: true,
+      id: true,
+      status: true,
+      roleId: true,
+      tenantId: true,
+    };
+    this.roleFeilds = {
+      id: true,
+      name: true,
+      description: true
+    };
+    this.tenantFeilds = {
+      name: true,
+      id: true,
+      address: true,
+      auth: {
+        select: {
+          refreshTokenExpiration: true,
+          accessTokenExpiration: true,
+          name: true,
+        }
+      }
+    };
+  }
 
 
   async create(createUserDto: CreateUserDto) {
@@ -20,7 +48,8 @@ export class UserService {
         password: await hash(password, 10),
         roleId: roleId,
         tenantId: tenantId
-      }
+      },
+      select: this.userFeilds
     });
   }
 
@@ -35,23 +64,28 @@ export class UserService {
       ...params, where: {
         isDeleted: false
       },
-      include: {
-        role: true,
+      select: {
+        ...this.userFeilds,
+        role: {
+          select: this.roleFeilds
+        }
       }
     });
   }
 
   findOne(id: string) {
     return this.prisma.user.findFirst({
-      where: { id, isDeleted: false }, include: {
-        role: true,
+      where: { id, isDeleted: false },
+      select: {
+        ...this.userFeilds,
+        role: {
+          select: this.roleFeilds
+        },
         tenant: {
-          include: {
-            authId: true
-          }
+          select: this.tenantFeilds
         }
       }
-    })
+    });
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {

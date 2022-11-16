@@ -9,9 +9,9 @@ export class TenantService {
   constructor(private prisma: PrismaService) { }
 
   async create(createTenantDto: CreateTenantDto) {
-    const { authClient, ...tenantData } = createTenantDto;
+    const { auth, ...tenantData } = createTenantDto;
     const newtenant = await this.prisma.tenant.create({ data: tenantData });
-    await this.prisma.authClients.create({ data: { ...authClient, tenantId: newtenant.id } })
+    await this.prisma.authClients.create({ data: { ...auth, tenantId: newtenant.id } })
     return newtenant;
   }
 
@@ -24,7 +24,7 @@ export class TenantService {
   }) {
     return this.prisma.tenant.findMany({
       ...params, include: {
-        authId: true
+        auth: true
       }
     })
   }
@@ -35,20 +35,20 @@ export class TenantService {
         id
       },
       include: {
-        authId: true
+        auth: true
       }
     })
   }
 
   async update(id: string, updateTenantDto: UpdateTenantDto) {
-    const { authClient, ...tenantData } = updateTenantDto;
+    const { auth, ...tenantData } = updateTenantDto;
 
     const tenant = await this.prisma.tenant.update({ where: { id }, data: tenantData })
-    if(authClient){
+    if(auth){
       const tenantAuth = await this.prisma.authClients.update({
         where: {
           tenantId: tenant.id
-        }, data: authClient
+        }, data: auth
       })
     }
     return tenant;
