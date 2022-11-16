@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { PrismaService } from '../prisma.service';
+import { PrismaModule } from '@spotlyt-backend/database';
 @Module({
+  imports: [PrismaModule],
   controllers: [UserController],
-  providers: [UserService, PrismaService]
+  providers: [UserService]
 })
-export class UserModule {}
+export class UserModule { }

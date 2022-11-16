@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserStatus } from '@prisma/client';
-import { PrismaService } from '../prisma.service';
+import { PrismaService } from '@spotlyt-backend/database';
 import { JwtService } from '@nestjs/jwt';
 import { IGenerateJWTPayload, IJwtTokenData } from '@spotlyt-backend/data/interfaces';
 import { ACCESS_TOKEN, REFRESH_TOKEN, JWT_SECRATE } from '@spotlyt-backend/data/constants';
