@@ -1,12 +1,12 @@
 export interface IJwtTokenData{
-    data: IGenerateJWTPayload & {
+    data: IJWTPayload & {
         type: string,
         id: string
     }
 }
 
 
-export interface IGenerateJWTPayload {
+export interface IJWTPayload {
     email: string,
     firstName: string,
     lastName: string | null,

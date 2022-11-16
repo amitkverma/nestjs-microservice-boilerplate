@@ -1,23 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ApiTags } from '@nestjs/swagger';
-
+import { PaginationParams } from '@spotlyt-backend/data/dtos';
 
 @ApiTags('role')
 @Controller('role')
 export class RoleController {
-  constructor(private readonly roleService: RoleService) {}
+  constructor(private readonly roleService: RoleService) { }
 
   @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.roleService.create(createRoleDto);
   }
 
+  @Get('/count')
+  count() {
+    return this.roleService.count();
+  }
+
   @Get()
-  findAll() {
-    return this.roleService.findAll();
+  findAll(@Query() { take, skip }: PaginationParams) {
+    return this.roleService.findAll({ take: +take, skip: +skip });
   }
 
   @Get(':id')

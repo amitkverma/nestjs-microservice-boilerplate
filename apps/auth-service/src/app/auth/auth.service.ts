@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@n
 import { UserStatus } from '@prisma/client';
 import { PrismaService } from '@spotlyt-backend/database';
 import { JwtService } from '@nestjs/jwt';
-import { IGenerateJWTPayload, IJwtTokenData } from '@spotlyt-backend/data/interfaces';
+import { IJWTPayload, IJwtTokenData } from '@spotlyt-backend/data/interfaces';
 import { ACCESS_TOKEN, REFRESH_TOKEN, JWT_SECRATE } from '@spotlyt-backend/data/constants';
 import { compare, hash } from 'bcrypt';
 @Injectable()
@@ -84,8 +84,7 @@ export class AuthService {
 
     }
 
-    async getTokens(userData: IGenerateJWTPayload, secrate: string) {
-
+    async getTokens(userData: IJWTPayload, secrate: string) {
         const [accessToken, refreshToken] = await Promise.all([
             this.jwtService.signAsync(
                 {

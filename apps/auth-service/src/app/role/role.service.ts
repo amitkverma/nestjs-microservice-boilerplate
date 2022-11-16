@@ -32,4 +32,8 @@ export class RoleService {
   remove(id: string) {
     return this.prisma.role.delete({ where: { id } })
   }
+
+  async count(where?: Prisma.RoleWhereInput) {
+    return { "count": await this.prisma.role.count({ where }) };
+  }
 }
