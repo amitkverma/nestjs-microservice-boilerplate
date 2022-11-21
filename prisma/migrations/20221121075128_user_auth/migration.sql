@@ -4,12 +4,10 @@
   - The primary key for the `User` table will be changed. If it partially fails, the table could be left without primary key constraint.
   - You are about to drop the column `name` on the `User` table. All the data in the column will be lost.
   - You are about to alter the column `email` on the `User` table. The data in that column could be lost. The data in that column will be cast from `Text` to `VarChar(60)`.
-  - Added the required column `employeeId` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `firstName` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `isDeleted` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `modifiedOn` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `password` to the `User` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `photoUrl` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `roleId` to the `User` table without a default value. This is not possible if the table is not empty.
   - Added the required column `tenantId` to the `User` table without a default value. This is not possible if the table is not empty.
 
@@ -30,7 +28,7 @@ ADD COLUMN     "createdBy" TEXT,
 ADD COLUMN     "createdOn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 ADD COLUMN     "deletedBy" TEXT,
 ADD COLUMN     "deletedOn" TIMESTAMP(3),
-ADD COLUMN     "employeeId" VARCHAR(255) NOT NULL,
+ADD COLUMN     "employeeId" VARCHAR(255),
 ADD COLUMN     "firstName" VARCHAR(255) NOT NULL,
 ADD COLUMN     "isDeleted" BOOLEAN NOT NULL,
 ADD COLUMN     "lastLoggedIn" TIMESTAMP(3),
@@ -41,7 +39,7 @@ ADD COLUMN     "modifiedOn" TIMESTAMP(3) NOT NULL,
 ADD COLUMN     "password" VARCHAR(255) NOT NULL,
 ADD COLUMN     "phone" VARCHAR(60),
 ADD COLUMN     "phoneExt" VARCHAR(60),
-ADD COLUMN     "photoUrl" VARCHAR(255) NOT NULL,
+ADD COLUMN     "photoUrl" VARCHAR(255),
 ADD COLUMN     "resetPasswordActive" BOOLEAN,
 ADD COLUMN     "resetPasswordExpire" TIMESTAMP(3),
 ADD COLUMN     "resetPasswordhash" VARCHAR(255),

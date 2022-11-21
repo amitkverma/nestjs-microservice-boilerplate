@@ -58,4 +58,8 @@ export class TenantService {
     await this.prisma.authClients.delete({ where: { tenantId: id } });
     return this.prisma.tenant.delete({ where: { id } })
   }
+
+  async count(where?: Prisma.TenantWhereInput) {
+    return { "count": await this.prisma.tenant.count({ where }) };
+  }
 }

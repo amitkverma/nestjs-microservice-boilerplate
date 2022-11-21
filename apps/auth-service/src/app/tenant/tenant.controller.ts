@@ -1,13 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { PaginationParams } from '@spotlyt-backend/data/dtos';
 
 @ApiTags('tenant')
 @Controller('tenant')
 export class TenantController {
   constructor(private readonly tenantService: TenantService) { }
+
+  @Get('count')
+  count() {
+    return this.tenantService.count({});
+  }
 
   @Post()
   create(@Body() createTenantDto: CreateTenantDto) {
@@ -15,8 +21,8 @@ export class TenantController {
   }
 
   @Get()
-  findAll() {
-    return this.tenantService.findAll();
+  findAll(@Query() { take, skip }: PaginationParams) {
+    return this.tenantService.findAll({ take: +take, skip: +skip });
   }
 
   @Get(':id')

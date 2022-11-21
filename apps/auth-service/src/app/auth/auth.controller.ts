@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
 import { Authenticate } from '@spotlyt-backend/common';
 import { jwtUser } from '@spotlyt-backend/data/interfaces';
+import { Request } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')

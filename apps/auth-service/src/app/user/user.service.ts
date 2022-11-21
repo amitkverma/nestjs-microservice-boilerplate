@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@spotlyt-backend/database';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserStatusDto } from './dto/change-user-status.dto';
 import { Prisma, UserStatus } from '@prisma/client';
 import { hash } from 'bcrypt';
 @Injectable()
@@ -17,6 +18,13 @@ export class UserService {
       status: true,
       roleId: true,
       tenantId: true,
+      firstName: true,
+      lastName: true,
+      middleName: true,
+      employeeId: true,
+      photoUrl: true,
+      phone: true,
+
     };
     this.roleFeilds = {
       id: true,
@@ -62,6 +70,7 @@ export class UserService {
   }) {
     return this.prisma.user.findMany({
       ...params, where: {
+        ...params.where,
         isDeleted: false
       },
       select: {
@@ -112,6 +121,19 @@ export class UserService {
       data: {
         isDeleted: true,
         deletedOn: (new Date()).toISOString()
+      }
+    })
+  }
+
+  async count(where?: Prisma.UserWhereInput) {
+    return { "count": await this.prisma.user.count({ where }) };
+  }
+
+  async changeUserStatus(id: string, userStatus: UserStatusDto) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        status: userStatus.status
       }
     })
   }

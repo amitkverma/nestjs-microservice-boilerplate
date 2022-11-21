@@ -15,7 +15,7 @@ export class RoleController {
     return this.roleService.create(createRoleDto);
   }
 
-  @Get('/count')
+  @Get('count')
   count() {
     return this.roleService.count();
   }
