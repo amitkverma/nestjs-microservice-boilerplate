@@ -12,7 +12,11 @@
    const app_name = "auth_service";
  
    const app = await NestFactory.create(AppModule, {
-     logger: initWinston(app_name)
+     logger: initWinston(app_name),
+     cors: {
+      allowedHeaders:"*",
+      origin: '*'
+     }
    });
  
    secureApplication(app);

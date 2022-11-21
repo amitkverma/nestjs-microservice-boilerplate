@@ -149,4 +149,17 @@ export class AuthService {
         });
     }
 
+    async getUser(userId: string){
+        return this.prisma.user.findFirst({
+            where: {
+                id: userId,
+                isDeleted: false
+            },
+            include: {
+                role: true,
+                tenant: true
+            }
+        })
+    }
+
 }
