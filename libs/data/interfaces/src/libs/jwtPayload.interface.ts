@@ -1,11 +1,10 @@
-export interface IJwtTokenData{
-    data: IJWTPayload & {
-        type: string,
-        id: string
-    }
+export type jwtUser = IJWTPayload & {
+    type: string,
+    id: string
 }
-
-
+export interface IJwtTokenData {
+    data: jwtUser
+}
 export interface IJWTPayload {
     email: string,
     firstName: string,
@@ -21,7 +20,7 @@ export interface IJWTPayload {
 }
 
 
-export interface IVerificationToken{
+export interface IVerificationToken {
     data: {
         type: string,
         id: string,

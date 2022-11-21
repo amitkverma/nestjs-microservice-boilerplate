@@ -1,12 +1,30 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, HttpException, HttpStatus } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
-
+import { Authenticate } from '@spotlyt-backend/common';
+import { jwtUser } from '@spotlyt-backend/data/interfaces';
+import { Action, CaslAbilityFactory } from './casl/casl-ability.factory';
+import { User } from '@prisma/client';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService, private readonly caslAbilityFactory: CaslAbilityFactory,) { }
+
+
+  @Get('play/:id')
+  @ApiBearerAuth('jwt')
+  async play(@Param('id') id: string, @Authenticate() currentUser: jwtUser) {
+
+    const userToUpdate = await this.authService.getUser(currentUser.id)
+
+    const ability = this.caslAbilityFactory.createForUser(currentUser, id);
+    const canPlay = ability.can(Action.Update, {...userToUpdate, __caslSubjectType__: 'User'});
+    return {
+      'msg': 'working',
+      canPlay: canPlay
+    }
+  }
 
   @Get('refresh/:id')
   async refresh(@Req() req: Request, @Param('id') id: string) {

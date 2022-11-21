@@ -6,7 +6,7 @@ import { IJwtTokenData } from '@spotlyt-backend/data/interfaces';
 
 
 export const Authenticate = createParamDecorator(
-    (roles: unknown, ctx: ExecutionContext) => {
+    (args: unknown, ctx: ExecutionContext) => {
         const request = ctx.switchToHttp().getRequest();
         const authHeader = request.header('authorization');
 
@@ -19,11 +19,13 @@ export const Authenticate = createParamDecorator(
 
         try {
             const payload = verify(token, JWT_SECRATE);
-            if ((payload as IJwtTokenData).data.type === ACCESS_TOKEN) {
+            const jwtPayload = (payload as IJwtTokenData);
+
+            if (jwtPayload.data.type !== ACCESS_TOKEN) {
                 throw new HttpException('Access Token Needed', HttpStatus.UNPROCESSABLE_ENTITY);
             }
-            return (payload as IJwtTokenData)?.data
-            // check if roles[] has roles in payload role
+            request.user = jwtPayload.data;
+            return jwtPayload.data;
         } catch (err: unknown) {
             throw new HttpException((err as Error).message, HttpStatus.UNAUTHORIZED);
         }

@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from "@nestjs/passport"
 import { JWT_ALGO } from '@spotlyt-backend/data/constants';
 import { PrismaModule } from '@spotlyt-backend/database';
+import { CaslModule } from './casl/casl.module';
 @Module({
   imports: [
     PrismaModule,
@@ -13,7 +14,8 @@ import { PrismaModule } from '@spotlyt-backend/database';
       signOptions: {
         algorithm: JWT_ALGO,
       }
-    })
+    }),
+    CaslModule,
   ],
   controllers: [AuthController],
   providers: [AuthService]

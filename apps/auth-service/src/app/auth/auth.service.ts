@@ -10,6 +10,19 @@ export class AuthService {
 
     constructor(private prisma: PrismaService, private jwtService: JwtService) { }
 
+    async getUser(userId: string){
+        return this.prisma.user.findFirst({
+            where: { id: userId }, include: {
+                role: true,
+                tenant: {
+                    include: {
+                        auth: true
+                    }
+                }
+            }
+        });
+    }
+
     async login(email: string, password: string) {
         const user = await this.prisma.user.findFirst({
             where: { email }, include: {
