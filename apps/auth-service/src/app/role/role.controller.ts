@@ -3,7 +3,7 @@ import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationParams } from '@spotlyt-backend/data/dtos';
+import { PaginationParams, SearchQueryParams } from '@spotlyt-backend/data/dtos';
 
 @ApiTags('role')
 @Controller('role')
@@ -16,13 +16,26 @@ export class RoleController {
   }
 
   @Get('count')
-  count() {
-    return this.roleService.count();
+  count(@Query() { query }: SearchQueryParams) {
+    return this.roleService.count({
+      name: {
+        contains: query ?? '',
+        mode: 'insensitive'
+      }
+    });
   }
 
   @Get()
-  findAll(@Query() { take, skip }: PaginationParams) {
-    return this.roleService.findAll({ take: +take, skip: +skip });
+  findAll(@Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
+    console.log('query: ', query);
+    return this.roleService.findAll({
+      take: +take, skip: +skip, where: {
+        name: {
+          contains: query ?? '',
+          mode: 'insensitive'
+        }
+      }
+    });
   }
 
   @Get(':id')

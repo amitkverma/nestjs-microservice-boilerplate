@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserStatusDto } from './dto/change-user-status.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationParams } from '@spotlyt-backend/data/dtos';
+import { PaginationParams, SearchQueryParams } from '@spotlyt-backend/data/dtos';
 
 
 @ApiTags('user')
@@ -34,8 +34,30 @@ export class UserController {
   }
 
   @Get('count')
-  count() {
-    return this.userService.count({ isDeleted: false });
+  count(@Query() { query }: SearchQueryParams) {
+    return this.userService.count({
+      isDeleted: false,
+      OR: [
+        {
+          firstName: {
+            contains: query ?? '',
+            mode: 'insensitive'
+          }
+        },
+        {
+          lastName: {
+            contains: query ?? '',
+            mode: 'insensitive'
+          }
+        },
+        {
+          email: {
+            contains: query ?? '',
+            mode: 'insensitive'
+          }
+        },
+      ],
+    });
   }
 
   @Post()
@@ -44,8 +66,31 @@ export class UserController {
   }
 
   @Get()
-  findAll(@Query() { take, skip }: PaginationParams) {
-    return this.userService.findAll({ take: +take, skip: +skip });
+  findAll(@Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
+    return this.userService.findAll({
+      take: +take, skip: +skip, where: {
+        OR: [
+          {
+            firstName: {
+              contains: query ?? '',
+              mode: 'insensitive'
+            }
+          },
+          {
+            lastName: {
+              contains: query ?? '',
+              mode: 'insensitive'
+            }
+          },
+          {
+            email: {
+              contains: query ?? '',
+              mode: 'insensitive'
+            }
+          },
+        ],
+      }
+    });
   }
 
   @Get(':id')

@@ -1,4 +1,4 @@
- import { Logger } from '@nestjs/common';
+ import { Logger, ValidationPipe } from '@nestjs/common';
  import { ConfigService } from '@nestjs/config';
  import { NestFactory } from '@nestjs/core';
  import { initWinston } from '@spotlyt-backend/common';
@@ -18,6 +18,9 @@
       origin: '*'
      }
    });
+   app.useGlobalPipes(new ValidationPipe({
+    whitelist: true
+  }));
  
    secureApplication(app);
   

@@ -3,7 +3,7 @@ import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { PaginationParams } from '@spotlyt-backend/data/dtos';
+import { PaginationParams, SearchQueryParams } from '@spotlyt-backend/data/dtos';
 
 @ApiTags('tenant')
 @Controller('tenant')
@@ -11,8 +11,13 @@ export class TenantController {
   constructor(private readonly tenantService: TenantService) { }
 
   @Get('count')
-  count() {
-    return this.tenantService.count({});
+  count(@Query() { query }: SearchQueryParams) {
+    return this.tenantService.count({
+      name: {
+        contains: query ?? '',
+        mode: 'insensitive'
+      }
+    });
   }
 
   @Post()
@@ -21,8 +26,15 @@ export class TenantController {
   }
 
   @Get()
-  findAll(@Query() { take, skip }: PaginationParams) {
-    return this.tenantService.findAll({ take: +take, skip: +skip });
+  findAll(@Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
+    return this.tenantService.findAll({
+      take: +take, skip: +skip, where: {
+        name: {
+          contains: query ?? '',
+          mode: 'insensitive'
+        }
+      }
+    });
   }
 
   @Get(':id')
