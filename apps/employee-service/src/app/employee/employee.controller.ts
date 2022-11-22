@@ -11,6 +11,76 @@ import { PaginationParams, SearchQueryParams } from '@spotlyt-backend/data/dtos'
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) { }
 
+  @Get('count/tenant/:tenantId/employee')
+  getEmployeesBelongingToATenantCount(
+    @Query() { query }: SearchQueryParams, @Param('tenantId') tenantId: string) {
+    return this.employeeService.count({
+      AND: [
+        {
+          OR: [
+            {
+              firstName: {
+                contains: query ?? '',
+                mode: 'insensitive'
+              }
+            },
+            {
+              email: {
+                contains: query ?? '',
+                mode: 'insensitive'
+              }
+            },
+            {
+              lastName: {
+                contains: query ?? '',
+                mode: 'insensitive'
+              }
+            }
+          ]
+        },
+        {
+          tenantId
+        }
+      ]
+    },)
+  }
+
+  @Get('tenant/:tenantId/employees')
+  getEmployeesBelongingToATenant(@Query() { take, skip }: PaginationParams,
+    @Query() { query }: SearchQueryParams, @Param('tenantId') tenantId: string) {
+    return this.employeeService.findAll({
+      take: +take, skip: +skip, where: {
+        AND: [
+          {
+            OR: [
+              {
+                firstName: {
+                  contains: query ?? '',
+                  mode: 'insensitive'
+                }
+              },
+              {
+                email: {
+                  contains: query ?? '',
+                  mode: 'insensitive'
+                }
+              },
+              {
+                lastName: {
+                  contains: query ?? '',
+                  mode: 'insensitive'
+                }
+              }
+            ]
+          },
+          {
+            tenantId
+          }
+        ]
+      },
+    });
+  }
+
   @Get('count')
   count(@Query() { query }: SearchQueryParams) {
     return this.employeeService.count({
