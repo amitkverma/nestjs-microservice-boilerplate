@@ -4,7 +4,6 @@ import { WinstonModule, utilities as nestWinstonModuleUtilities } from 'nest-win
 
 
 export const initWinston = (apiTitle: string) => {
-  console.log(__dirname)
   const transports = {
     console: new winston.transports.Console({
       level: 'silly',

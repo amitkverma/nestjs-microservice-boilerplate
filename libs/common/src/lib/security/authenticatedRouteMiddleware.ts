@@ -1,5 +1,3 @@
-
-
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { verify } from 'jsonwebtoken';
 import { JWT_SECRATE, ACCESS_TOKEN } from '@spotlyt-backend/data/constants';
