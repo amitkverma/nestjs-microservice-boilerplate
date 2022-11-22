@@ -1,29 +1,29 @@
-export interface IJwtTokenData{
-    data: IGenerateJWTPayload & {
-        type: string,
-        id: number
-    }
+export type jwtUser = IJWTPayload & {
+    type: string,
+    id: string
 }
-
-
-export interface IGenerateJWTPayload {
+export interface IJwtTokenData {
+    data: jwtUser
+}
+export interface IJWTPayload {
     email: string,
     firstName: string,
-    lastName: string,
-    permission: string[],
+    lastName: string | null,
     roleName: string,
     status: string,
     tenantName: string,
-    roleId: number,
-    tenantId: number,
-    userId: number
+    roleId: string,
+    tenantId: string,
+    userId: string,
+    accessExpiryTime: string
+    refreshExpiryTIme: string
 }
 
 
-export interface IVerificationToken{
+export interface IVerificationToken {
     data: {
         type: string,
-        id: number,
+        id: string,
         email: string
     }
 }

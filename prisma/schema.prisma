@@ -10,10 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Gender {
-  Male
-  Female
-  Other
+enum UserStatus {
+  Active
+  Inactive
+  Restricted
+  Blocked
+  Deleted
 }
 
 enum Status {
@@ -21,93 +23,89 @@ enum Status {
   Inactive
 }
 
-enum RoleType {
-  Admin
-  HR
-  SuperAdmin
-}
-model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  firstName  String
-  lastName  String
-  middleName  String?
-  username String
-  designation String
-  phone String
-  photoUrl String
-  gender Gender
-  dob DateTime
+model AuthClients{
+  id      String  @id @default(uuid())
+  name    String  @db.VarChar(255)
+  secrate String  @db.VarChar(255)
+  accessTokenExpiration String @db.VarChar(10)
+  refreshTokenExpiration String @db.VarChar(10)
 
-  password String
-
-  userTenant UserTenant?
-
-  // ======== COMMOM COLUMN ======= //
-  createdAt  DateTime   @default(now())
-  modifiedAt DateTime   @default(now())
-  createdBy String?
-  modifiedBy String?
-  // ======== COMMOM COLUMN ======= //
-
-}
+  createdOn  DateTime @default(now())
+  modifiedBy String? @db.VarChar(60)
+  modifiedOn DateTime @updatedAt
 
 
-model Role {
-  id    Int     @default(autoincrement()) @id
-  name String
-  roleType RoleType
-  permissions String[]
-  userTenants UserTenant[]
-
-  // ======== COMMOM COLUMN ======= //
-  createdAt  DateTime   @default(now())
-  modifiedAt DateTime   @default(now())
-  createdBy String?
-  modifiedBy String?
-  // ======== COMMOM COLUMN ======= //
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String @unique
 }
 
 model Tenant {
-  id    Int     @default(autoincrement()) @id
-  name String
-  status Status
-  address String?
-  state String?
-  zip String?
-  city String?
-  country String?
-  primaryContactEmail String
-  allowedDomain String
-  tenantType String
-  userTenants UserTenant[]
+  id      String  @id @default(uuid())
+  name    String  @db.VarChar(255)
+  status  Status  @default(Active)
+  website String? @db.VarChar(255)
+  logoUrl String? @db.VarChar(255)
+  address String? @db.VarChar(255)
+  city    String? @db.VarChar(255)
+  state   String? @db.VarChar(255)
+  zip     String? @db.VarChar(255)
 
-  // ======== COMMOM COLUMN ======= //
-  createdAt  DateTime   @default(now())
-  modifiedAt DateTime   @default(now())
-  createdBy String?
-  modifiedBy String?
-  // ======== COMMOM COLUMN ======= //
+  createdOn  DateTime @default(now())
+  modifiedBy String? @db.VarChar(60)
+  modifiedOn DateTime @updatedAt
+  
+  users User[]
+  auth AuthClients?
 }
 
-model UserTenant {
-  id    Int     @default(autoincrement()) @id
-  status Status
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+model Role {
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(255)
+  description String?
 
-  tenant Tenant @relation(fields: [tenantId], references: [id])
-  tenantId Int 
+  createdOn  DateTime @default(now())
+  modifiedBy String? @db.VarChar(60)
+  modifiedOn DateTime @updatedAt
+
+  users User[]
+}
+model User {
+  id         String     @id @default(uuid())
+  status     UserStatus @default(Active)
+  firstName  String     @db.VarChar(255)
+  lastName   String?    @db.VarChar(255)
+  middleName String?    @db.VarChar(255)
+
+  email               String    @db.VarChar(60)
+  phone               String?   @db.VarChar(60)
+  phoneExt            String?   @db.VarChar(60)
+  password            String    @db.VarChar(255)
+  resetPasswordhash   String?   @db.VarChar(255)
+  resetPasswordActive Boolean?
+  resetPasswordExpire DateTime?
+  photoUrl            String?    @db.VarChar(255)
+  employeeId          String?    @db.VarChar(255)
+
+  lastLoggedIn DateTime?
+
+  // =========== COMMON ========== //
+  createdBy String?
+  createdOn DateTime @default(now())
+
+  modifiedBy String? @db.VarChar(60)
+  modifiedOn DateTime @updatedAt
+
+  deletedBy String?
+  deletedOn DateTime?
+  isDeleted Boolean
+  // =========== COMMON ========== //
+
 
   role Role @relation(fields: [roleId], references: [id])
-  roleId Int 
+  roleId String 
 
-
-  // ======== COMMOM COLUMN ======= //
-  createdAt  DateTime   @default(now())
-  modifiedAt DateTime   @default(now())
-  createdBy String?
-  modifiedBy String?
-  // ======== COMMOM COLUMN ======= //
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String 
 }
+
 

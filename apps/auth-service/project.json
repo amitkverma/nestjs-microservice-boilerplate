@@ -13,6 +13,14 @@
         "outputPath": "dist/apps/auth-service",
         "main": "apps/auth-service/src/main.ts",
         "tsConfig": "apps/auth-service/tsconfig.app.json",
+        "tsPlugins": [
+          {
+            "name": "@nestjs/swagger/plugin",
+            "options": {
+              "classValidatorShim": false,
+              "introspectComments": true
+            }
+        }],
         "assets": ["apps/auth-service/src/assets"]
       },
       "configurations": {

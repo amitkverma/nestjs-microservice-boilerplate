@@ -1,13 +1,10 @@
 import { Environment } from '@spotlyt-backend/data/enums';
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNumber, validateSync } from 'class-validator';
+import { IsEnum, validateSync } from 'class-validator';
 
 class EnvironmentVariables {
   @IsEnum(Environment)
   NODE_ENV: Environment;
-
-  @IsNumber()
-  CORE_PORT: number;  
 }
 
 export function validate(config: Record<string, unknown>) {

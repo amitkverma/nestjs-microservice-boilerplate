@@ -18,8 +18,10 @@
       "@spotlyt-backend/common": ["libs/common/src/index.ts"],
       "@spotlyt-backend/config": ["libs/config/src/index.ts"],
       "@spotlyt-backend/data/constants": ["libs/data/constants/src/index.ts"],
+      "@spotlyt-backend/data/dtos": ["libs/data/dtos/src/index.ts"],
       "@spotlyt-backend/data/enums": ["libs/data/enums/src/index.ts"],
-      "@spotlyt-backend/data/interfaces": ["libs/data/interfaces/src/index.ts"]
+      "@spotlyt-backend/data/interfaces": ["libs/data/interfaces/src/index.ts"],
+      "@spotlyt-backend/database": ["libs/database/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
