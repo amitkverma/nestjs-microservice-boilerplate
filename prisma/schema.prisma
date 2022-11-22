@@ -23,19 +23,18 @@ enum Status {
   Inactive
 }
 
-model AuthClients{
-  id      String  @id @default(uuid())
-  name    String  @db.VarChar(255)
-  secrate String  @db.VarChar(255)
-  accessTokenExpiration String @db.VarChar(10)
+model AuthClients {
+  id                     String @id @default(uuid())
+  name                   String @db.VarChar(255)
+  secrate                String @db.VarChar(255)
+  accessTokenExpiration  String @db.VarChar(10)
   refreshTokenExpiration String @db.VarChar(10)
 
   createdOn  DateTime @default(now())
-  modifiedBy String? @db.VarChar(60)
+  modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
-
-  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
   tenantId String @unique
 }
 
@@ -51,11 +50,12 @@ model Tenant {
   zip     String? @db.VarChar(255)
 
   createdOn  DateTime @default(now())
-  modifiedBy String? @db.VarChar(60)
+  modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
-  
+
   users User[]
-  auth AuthClients?
+  auth  AuthClients?
+  employees Employee[]
 }
 
 model Role {
@@ -64,11 +64,12 @@ model Role {
   description String?
 
   createdOn  DateTime @default(now())
-  modifiedBy String? @db.VarChar(60)
+  modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
   users User[]
 }
+
 model User {
   id         String     @id @default(uuid())
   status     UserStatus @default(Active)
@@ -83,8 +84,8 @@ model User {
   resetPasswordhash   String?   @db.VarChar(255)
   resetPasswordActive Boolean?
   resetPasswordExpire DateTime?
-  photoUrl            String?    @db.VarChar(255)
-  employeeId          String?    @db.VarChar(255)
+  photoUrl            String?   @db.VarChar(255)
+  employeeId          String?   @db.VarChar(255)
 
   lastLoggedIn DateTime?
 
@@ -92,7 +93,7 @@ model User {
   createdBy String?
   createdOn DateTime @default(now())
 
-  modifiedBy String? @db.VarChar(60)
+  modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
   deletedBy String?
@@ -100,12 +101,67 @@ model User {
   isDeleted Boolean
   // =========== COMMON ========== //
 
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
 
-  role Role @relation(fields: [roleId], references: [id])
-  roleId String 
-
-  tenant Tenant @relation(fields: [tenantId], references: [id])
-  tenantId String 
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String
 }
 
+// ================ Employees // =============
+enum EmployeeStatus {
+  Active
+  Inactive
+  Notice
+}
 
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+model Employee {
+  id                String         @id @default(uuid())
+  firstName         String         @db.VarChar(255)
+  middleName        String?        @db.VarChar(255)
+  lastName          String         @db.VarChar(255)
+  status            EmployeeStatus
+  email             String         @db.VarChar(60)
+  phone             String?        @db.VarChar(60)
+  gender            Gender
+  dob               DateTime?
+  picture           String?        @db.VarChar(255)
+  hiredOn           DateTime?
+  isMarried         Boolean?
+  weddingAniversary DateTime?
+
+  companyTitle  CompanyTitle?
+  team Team?
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String
+
+  createdOn  DateTime @default(now())
+  createdBy String?
+  modifiedBy String?  @db.VarChar(60)
+  modifiedOn DateTime @updatedAt
+}
+
+model CompanyTitle {
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(255)
+  description String? @db.VarChar(255)
+
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String @unique
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(255)
+  description String?  @db.VarChar(255)
+  isRemote    Boolean?
+
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String @unique
+}
