@@ -12,7 +12,7 @@ export class AuthService {
 
     async login(email: string, password: string) {
         const user = await this.prisma.user.findFirst({
-            where: { email }, include: {
+            where: { email, tenant: { status: 'Active' } }, include: {
                 role: true,
                 tenant: {
                     include: {
@@ -149,7 +149,7 @@ export class AuthService {
         });
     }
 
-    async getUser(userId: string){
+    async getUser(userId: string) {
         return this.prisma.user.findFirst({
             where: {
                 id: userId,

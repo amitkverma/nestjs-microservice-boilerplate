@@ -10,9 +10,16 @@ export class TenantService {
 
   async create(createTenantDto: CreateTenantDto) {
     const { auth, ...tenantData } = createTenantDto;
-    const newtenant = await this.prisma.tenant.create({ data: tenantData });
-    await this.prisma.authClients.create({ data: { ...auth, tenantId: newtenant.id } })
-    return newtenant;
+    return this.prisma.tenant.create({
+      data: {
+        ...tenantData, auth: {
+          create: auth
+        }
+      },
+      include: {
+        auth: true
+      }
+    })
   }
 
   findAll(params?: {
@@ -42,16 +49,17 @@ export class TenantService {
 
   async update(id: string, updateTenantDto: UpdateTenantDto) {
     const { auth, ...tenantData } = updateTenantDto;
-
-    const tenant = await this.prisma.tenant.update({ where: { id }, data: tenantData })
-    if(auth){
-      const tenantAuth = await this.prisma.authClients.update({
+    if (tenantData) {
+      await this.prisma.tenant.update({ where: { id }, data: tenantData })
+    }
+    if (auth) {
+      await this.prisma.authClients.update({
         where: {
-          tenantId: tenant.id
+          tenantId: id
         }, data: auth
       })
     }
-    return tenant;
+    return this.prisma.tenant.findFirst({ where: { id }, include: { auth: true } });
   }
 
   async remove(id: string) {

@@ -11,6 +11,17 @@ export class TenantController {
   constructor(private readonly tenantService: TenantService) { }
 
   @Get('count')
+  countActive(@Query() { query }: SearchQueryParams) {
+    return this.tenantService.count({
+      name: {
+        contains: query ?? '',
+        mode: 'insensitive'
+      },
+      status: 'Active'
+    });
+  }
+
+  @Get('count/all')
   count(@Query() { query }: SearchQueryParams) {
     return this.tenantService.count({
       name: {
@@ -26,6 +37,19 @@ export class TenantController {
   }
 
   @Get()
+  findAllActive(@Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
+    return this.tenantService.findAll({
+      take: +take, skip: +skip, where: {
+        name: {
+          contains: query ?? '',
+          mode: 'insensitive'
+        },
+        status: 'Active'
+      }
+    });
+  }
+
+  @Get('all')
   findAll(@Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
     return this.tenantService.findAll({
       take: +take, skip: +skip, where: {

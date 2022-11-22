@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req, HttpException, HttpStatus, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
+import { LoginDto, ResetPasswordDto, ChangePasswordDto } from './dto/auth.dto';
 import { Authenticate } from '@spotlyt-backend/common';
 import { jwtUser } from '@spotlyt-backend/data/interfaces';
 import { Request } from 'express';
@@ -13,8 +13,8 @@ export class AuthController {
 
   @Get('me')
   @ApiBearerAuth('jwt')
-  async currentUser(@Authenticate() currentUser: jwtUser){
-    const { password, ...user} = await this.authService.getUser(currentUser.id);
+  async currentUser(@Authenticate() currentUser: jwtUser) {
+    const { password, ...user } = await this.authService.getUser(currentUser.id);
     return user;
   }
 
@@ -41,6 +41,9 @@ export class AuthController {
       resetPasswordPayload.newPassword);
   }
 
-
+  @Patch('/change-password')
+  changePassword(@Body() changePasswordPayload: ChangePasswordDto) {
+    return this.authService.changePassword(changePasswordPayload.userId, changePasswordPayload.newPassword)
+  }
 
 }
