@@ -28,6 +28,7 @@ export class CreateEmployeeDto {
     lastName: string;
 
     @IsEnum(EmployeeStatus)
+    @IsOptional()
     @IsNotEmpty()
     @ApiProperty({ enum: EmployeeStatus })
     status: EmployeeStatus;

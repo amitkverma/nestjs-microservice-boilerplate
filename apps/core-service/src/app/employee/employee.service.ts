@@ -5,7 +5,6 @@ import { PrismaService } from '@spotlyt-backend/database';
 import { Prisma } from '@prisma/client';
 import * as csvParser from 'csv-parser';
 import { createReadStream } from 'fs';
-import { setValue } from './utils/setNestedFeilds';
 
 
 @Injectable()
@@ -13,7 +12,7 @@ export class EmployeeService {
   constructor(private prisma: PrismaService) { }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    return this.prisma.employee.create({ data: createEmployeeDto });
+    return this.prisma.employee.create({ data: {...createEmployeeDto, status: 'Active'} });
   }
 
   async findAll(params?: {
