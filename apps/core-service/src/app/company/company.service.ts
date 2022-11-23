@@ -9,7 +9,12 @@ export class CompanyService {
   constructor(private prisma: PrismaService) { }
 
   async create(createCompanyDto: CreateCompanyDto) {
-    return this.prisma.companyTitle.create({ data: createCompanyDto });
+    return this.prisma.companyTitle.create({
+      data: {
+        ...createCompanyDto,
+        name: createCompanyDto.name.split(' ').join('_').toLocaleLowerCase()
+      }
+    });
   }
 
   async findAll(params?: {
