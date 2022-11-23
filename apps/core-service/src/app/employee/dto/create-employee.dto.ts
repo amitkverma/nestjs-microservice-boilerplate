@@ -84,12 +84,10 @@ export class CreateEmployeeDto {
     tenantId: string;
 
 
-    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     companyTitleId: string;
 
-    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     teamId: string;
