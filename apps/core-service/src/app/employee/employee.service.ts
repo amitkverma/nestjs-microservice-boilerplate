@@ -3,16 +3,14 @@ import { CreateEmployeeDto, Employee } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { PrismaService } from '@spotlyt-backend/database';
 import { Prisma } from '@prisma/client';
-import * as csvParser from 'csv-parser';
-import { createReadStream } from 'fs';
-
+import * as dfd from "danfojs-node"
 
 @Injectable()
 export class EmployeeService {
   constructor(private prisma: PrismaService) { }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    return this.prisma.employee.create({ data: {...createEmployeeDto, status: 'Active'} });
+    return this.prisma.employee.create({ data: { ...createEmployeeDto, status: 'Active' } });
   }
 
   async findAll(params?: {
@@ -52,13 +50,30 @@ export class EmployeeService {
     return this.prisma.employee.delete({ where: { id } })
   }
 
-  createBulk(fileName: string, tenantId: string) {
-    const employees = [];
-    createReadStream(`./upload/${fileName}`).pipe(csvParser()).on('data', (payloadRaw: any) => {
-      employees.push(this.employeeMapperFromCsv(tenantId, payloadRaw));
-    }).on('end', async () => {
-      await this.prisma.employee.createMany({ skipDuplicates: true, data: employees });
-    })
+  async createBulk(fileName: string, tenantId: string) {
+    const df = await dfd.readCSV(`./upload/${fileName}`);
+    const teams = df?.['Department']?.unique()?.values;
+    const companyTitles = df?.['Role']?.unique()?.values;
+
+    const teamsBulkData = [];
+    teams?.map((team: string) => teamsBulkData.push({ name: team }));
+
+    const companyTitlesBulkData = [];
+    companyTitles?.map((companyTitle: string) => companyTitlesBulkData.push({ name: companyTitle }));
+
+
+    const employeesBulkData = [];
+    const employees = dfd.toJSON(df);
+    if (Array.isArray(employees)) {
+      employees?.map((employee: any) => employeesBulkData.push(this.employeeMapperFromCsv(tenantId, employee)));
+    }
+
+    return Promise.all([
+      this.prisma.companyTitle.createMany({ skipDuplicates: true, data: companyTitlesBulkData }),
+      this.prisma.team.createMany({ skipDuplicates: true, data: teamsBulkData }),
+      this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData })
+    ])
+
   }
 
 
@@ -66,13 +81,13 @@ export class EmployeeService {
     const name = payload?.['Name']?.split(' ');
     return {
       dob: Date.parse(payload?.['Birth Date']) ? payload?.['Birth Date'] : null,
-      companyTitleId: payload?.['Role']?.toLowerCase(),
+      companyTitleId: payload?.['Role'],
       email: payload?.['Email id'],
       firstName: name?.[0] ?? '',
       lastName: name?.[1] ?? '',
       hiredOn: Date.parse(payload?.['Joining Date']) ? payload?.['Joining Date'] : null,
       picture: payload?.['Picture'] ?? null,
-      teamId: payload?.['Department']?.toLowerCase(),
+      teamId: payload?.['Department'],
       gender: payload?.['Gender']?.toLowerCase() ?? 'Male',
       status: 'Active',
       tenantId: tenantId,
