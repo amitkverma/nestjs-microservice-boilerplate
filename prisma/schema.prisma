@@ -77,7 +77,7 @@ model User {
   lastName   String?    @db.VarChar(255)
   middleName String?    @db.VarChar(255)
 
-  email               String    @db.VarChar(60)
+  email               String    @unique @db.VarChar(60)
   phone               String?   @db.VarChar(60)
   phoneExt            String?   @db.VarChar(60)
   password            String    @db.VarChar(255)
@@ -127,7 +127,7 @@ model Employee {
   middleName        String?        @db.VarChar(255)
   lastName          String         @db.VarChar(255)
   status            EmployeeStatus
-  email             String         @db.VarChar(60)
+  email             String         @unique @db.VarChar(60)
   phone             String?        @db.VarChar(60)
   gender            Gender
   dob               DateTime?

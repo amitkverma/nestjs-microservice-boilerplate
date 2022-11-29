@@ -12,7 +12,7 @@ export class AuthService {
 
     async login(email: string, password: string) {
         const user = await this.prisma.user.findFirst({
-            where: { email, tenant: { status: 'Active' } }, include: {
+            where: { email }, include: {
                 role: true,
                 tenant: {
                     include: {
@@ -22,6 +22,8 @@ export class AuthService {
             }
         });
         if (!user) { throw new HttpException('User Invalid', HttpStatus.NOT_FOUND) }
+
+        if (user.tenant.status !== 'Active') { throw new HttpException(`${user.tenant.name} isn't Active, users cant login`, HttpStatus.FORBIDDEN) }
 
         if (user.status !== UserStatus.Active) { throw new HttpException(`User is ${user.status}`, HttpStatus.FORBIDDEN) }
 

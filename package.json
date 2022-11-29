@@ -8,6 +8,9 @@
     "test": "nx test",
     "migration:apply": "npx prisma migrate dev"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/axios": "^0.1.0",

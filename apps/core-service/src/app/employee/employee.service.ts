@@ -43,6 +43,9 @@ export class EmployeeService {
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
+    if(updateEmployeeDto?.email){
+      delete updateEmployeeDto.email;
+    }
     return this.prisma.employee.update({ where: { id }, data: updateEmployeeDto });
   }
 
@@ -65,7 +68,7 @@ export class EmployeeService {
     const employeesBulkData = [];
     const employees = dfd.toJSON(df);
     if (Array.isArray(employees)) {
-      employees?.map((employee: any) => employeesBulkData.push(this.employeeMapperFromCsv(tenantId, employee)));
+      employees?.map((employee: any) => employeesBulkData.push(this.employeeMapperFromCsvData(tenantId, employee)));
     }
 
     return Promise.all([
@@ -77,18 +80,19 @@ export class EmployeeService {
   }
 
 
-  employeeMapperFromCsv(tenantId: string, payload: any): Employee {
+  employeeMapperFromCsvData(tenantId: string, payload: any): Employee {
     const name = payload?.['Name']?.split(' ');
     return {
       dob: Date.parse(payload?.['Birth Date']) ? payload?.['Birth Date'] : null,
       companyTitleId: payload?.['Role'],
       email: payload?.['Email id'],
+      phone: payload?.['Phone Number'],
       firstName: name?.[0] ?? '',
       lastName: name?.[1] ?? '',
       hiredOn: Date.parse(payload?.['Joining Date']) ? payload?.['Joining Date'] : null,
       picture: payload?.['Picture'] ?? null,
       teamId: payload?.['Department'],
-      gender: payload?.['Gender']?.toLowerCase() ?? 'Male',
+      gender: payload?.['Gender'] ?? 'Male',
       status: 'Active',
       tenantId: tenantId,
     };

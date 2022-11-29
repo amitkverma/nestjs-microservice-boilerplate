@@ -24,9 +24,6 @@ CREATE TYPE "EmployeeStatus" AS ENUM ('Active', 'Inactive', 'Notice');
 -- CreateEnum
 CREATE TYPE "Gender" AS ENUM ('Male', 'Female', 'Other');
 
--- DropIndex
-DROP INDEX "User_email_key";
-
 -- AlterTable
 ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
 DROP COLUMN "name",
@@ -150,6 +147,9 @@ CREATE TABLE "Team" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AuthClients_tenantId_key" ON "AuthClients"("tenantId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Employee_email_key" ON "Employee"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CompanyTitle_name_key" ON "CompanyTitle"("name");
