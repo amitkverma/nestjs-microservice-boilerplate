@@ -86,7 +86,7 @@ export class EmployeeService {
       dob: Date.parse(payload?.['Birth Date']) ? payload?.['Birth Date'] : null,
       companyTitleId: payload?.['Role'],
       email: payload?.['Email id'],
-      phone: payload?.['Phone Number'],
+      phone: payload?.['Phone Number']?.toString() ?? null,
       firstName: name?.[0] ?? '',
       lastName: name?.[1] ?? '',
       hiredOn: Date.parse(payload?.['Joining Date']) ? payload?.['Joining Date'] : null,

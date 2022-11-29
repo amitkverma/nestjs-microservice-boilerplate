@@ -1,7 +1,7 @@
  import { Logger, ValidationPipe } from '@nestjs/common';
  import { ConfigService } from '@nestjs/config';
  import { NestFactory } from '@nestjs/core';
- import { initWinston } from '@spotlyt-backend/common';
+ import { initWinston, PrismaExceptionFilters } from '@spotlyt-backend/common';
  import { AppModule } from './app/app.module';
  import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
  import * as swStats from 'swagger-stats';
@@ -21,7 +21,8 @@
    app.useGlobalPipes(new ValidationPipe({
     whitelist: true
   }));
- 
+
+  app.useGlobalFilters(new PrismaExceptionFilters.AllExceptionsFilter());
    secureApplication(app);
   
    const configPrefix = 'status';
