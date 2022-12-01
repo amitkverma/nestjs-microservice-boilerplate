@@ -1,5 +1,7 @@
+import { hash } from 'bcrypt';
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
+
 
 async function main() {
     console.info(`[+] Seeding Db For Roles`);
@@ -14,15 +16,44 @@ async function main() {
                     name: 'Admin',
                     description: 'System Admin Role'
                 },
-                {
-                    name: 'SuperAdmin',
-                    description: 'Super Admin Role'
-                },
             ]
         })
     ]);
-    console.info(`[+] Seeded Db`);
+    const superAdminRole = await prisma.role.create({
+        data: {
+            name: 'SuperAdmin',
+            description: 'Super Admin Role'
+        }
+    });
 
+    const defaultTenant = await prisma.tenant.create({
+        data: {
+            name: 'Consultbae',
+            auth: {
+                create: {
+                    accessTokenExpiration: '10m',
+                    name: 'Consultbae Auth',
+                    refreshTokenExpiration: '7d',
+                    secrate: 'Consultbae&&&^^^'
+                }
+            }
+        }
+    });
+
+    const superUser = await prisma.user.create( {
+        data: {
+            email: 'super@consultbae.com',
+            firstName: 'Super',
+            lastName: 'Admin',
+            tenantId: defaultTenant.id,
+            roleId: superAdminRole.id,
+            status: 'Active',
+            isDeleted: false,
+            password: await hash(`consultbae#123!`, 10)
+        }
+    });
+
+    console.info(`[+] Seeded Db`);
 }
 
 main().then(async () => {
