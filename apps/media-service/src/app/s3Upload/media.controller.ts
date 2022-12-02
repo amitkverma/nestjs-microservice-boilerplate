@@ -27,7 +27,7 @@ export class MediaController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const uploadedFile = await this.mediaService.uploadFile(file);
-    return uploadedFile
+    return { ...uploadedFile, fileName: file.filename, mimeType: file.mimetype }
   }
 
   @Get(':id')
