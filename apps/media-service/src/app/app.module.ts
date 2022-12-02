@@ -6,7 +6,7 @@ import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MediaModule } from './media/media.module';
+import { MediaModule } from './s3Upload/media.module';
 
 const health_config: IHealthConfig = {
   host: 'localhost',

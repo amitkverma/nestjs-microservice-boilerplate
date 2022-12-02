@@ -6,8 +6,8 @@ import { Express } from 'express';
 import { Multer } from 'multer';
 
 
-@Controller('media')
-@ApiTags('media')
+@Controller('upload')
+@ApiTags('upload')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) { }
 
@@ -17,14 +17,14 @@ export class MediaController {
     schema: {
       type: 'object',
       properties: {
-        image: {
+        file: {
           type: 'string',
           format: 'binary',
         },
       },
     },
   })
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const uploadedFile = await this.mediaService.uploadFile(file);
     return uploadedFile
