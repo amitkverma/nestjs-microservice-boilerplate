@@ -52,8 +52,17 @@ async function main() {
             password: await hash(`consultbae#123!`, 10)
         }
     });
+    
+    await EventsSeed();
 
     console.info(`[+] Seeded Db`);
+}
+
+
+async function EventsSeed() {
+    await Promise.all([
+
+    ])
 }
 
 main().then(async () => {
