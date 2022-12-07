@@ -5,6 +5,35 @@ networks:
     driver: bridge
 
 services:
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./
+      cache_from:
+        - base-image:nx-base
+      dockerfile: ./apps/auth-service/Dockerfile
+      args:
+        NODE_ENV: "development"
+        BUILD_FLAG: ""
+        PORT: 7001
+    image: auth-service:nx-dev
+    hostname: auth-service
+    ports:
+      - "7001:7001"
+    environment:
+      NODE_ENV: "development"
+      PORT: 7001
+    networks:
+      - spotlyt
+    depends_on:
+      - postgres
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:7001/status/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
   core-service:
     container_name: core-service
     build:
@@ -25,48 +54,53 @@ services:
       PORT: 3000
     networks:
       - spotlyt
-    # restart: on-failure
-    # healthcheck:
-    #   test: [ "CMD", "curl", "-f", "http://localhost:3000/swagger-stats/metrics" ]
-    #   interval: 10s
-    #   timeout: 10s
-    #   retries: 10
+    depends_on:
+      - postgres
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/status/health" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-  example-service:
-    container_name: example-service
+  media-service:
+    container_name: media-service
     build:
       context: ./
       cache_from:
         - base-image:nx-base
-      dockerfile: ./apps/example-service/Dockerfile
+      dockerfile: ./apps/media-service/Dockerfile
       args:
         NODE_ENV: "development"
         BUILD_FLAG: ""
-        PORT: 3333
-    image: example-service:nx-dev
-    hostname: example-service
+        PORT: 7004
+    image: media-service:nx-dev
+    hostname: media-service
     ports:
-      - "3333:3333"
+      - "7004:7004"
     environment:
       NODE_ENV: "development"
-      PORT: 3333
+      PORT: 7004
     networks:
       - spotlyt
-    # restart: on-failure
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:3334/swagger-stats/metrics"]
-    #   interval: 10s
-    #   timeout: 10s
-    #   retries: 10
+    depends_on:
+      - postgres
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7004/status/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
   kong:
     build:
-      context: ./kong
+      context: ./docker/kong
       dockerfile: Dockerfile
     container_name: kong
     restart: unless-stopped
     command: "kong start"
     volumes:
-      - ./kong/conf/kong.yml:/usr/local/kong/declarative/kong.yml
+      - ./docker/kong/conf/kong.yml:/usr/local/kong/declarative/kong.yml
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml

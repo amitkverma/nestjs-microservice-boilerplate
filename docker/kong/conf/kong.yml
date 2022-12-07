@@ -2,18 +2,24 @@ _format_version: "2.1"
 _transform: true
 
 services:
+  - name: auth-service
+    url: http://auth-service:7001
+    routes:
+      - name: auth-service
+        paths:
+          - /auth
   - name: core-service
     url: http://core-service:3000
     routes:
       - name: core-service
         paths:
           - /core
-  - name: example-service
-    url: http://example-service:3333
+  - name: media-service
+    url: http://media-service:7004
     routes:
-      - name: example-service
+      - name: media-service
         paths:
-          - /example
+          - /media
 
 plugins:
   - name: rate-limiting
