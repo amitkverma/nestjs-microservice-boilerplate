@@ -231,7 +231,7 @@ model Event {
   attachments Attachment[]
   notes       Note[]
   audiences   Audience[]
-  Participant Participant[]
+  participants Participant[]
 }
 
 enum ParticipantType {

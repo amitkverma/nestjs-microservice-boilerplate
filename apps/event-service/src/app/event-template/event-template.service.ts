@@ -2,19 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { CreateEventTemplateDto } from './dto/create-event-template.dto';
 import { UpdateEventTemplateDto } from './dto/update-event-template.dto';
 import { PrismaService } from '@spotlyt-backend/database';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class EventTemplateService {
   constructor(private prisma: PrismaService) { }
 
-  create(createEventTemplateDto: CreateEventTemplateDto) {
+  async create(createEventTemplateDto: CreateEventTemplateDto) {
     return this.prisma.eventTemplate.create({ data: createEventTemplateDto })
   }
 
-  findAll() {
+  async findAll(params?: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.EventTemplateWhereUniqueInput;
+    where?: Prisma.EventTemplateWhereInput;
+    orderBy?: Prisma.EventTemplateOrderByWithRelationInput;
+  }) {
+    return this.prisma.eventTemplate.findMany(params);
   }
 
-  findOne(id: string) {
+  async count(where?: Prisma.EventTemplateWhereInput) {
+    return { count: await this.prisma.eventTemplate.count({ where }) }
+  }
+
+  async findOne(id: string) {
     return this.prisma.eventTemplate.findFirst({
       where: { id }, include: {
         eventCategory: {
@@ -26,7 +38,7 @@ export class EventTemplateService {
     });
   }
 
-  update(id: string, updateEventTemplateDto: UpdateEventTemplateDto) {
+  async update(id: string, updateEventTemplateDto: UpdateEventTemplateDto) {
     if (updateEventTemplateDto.eventCategoryId) {
       delete updateEventTemplateDto.eventCategoryId;
     }
@@ -36,7 +48,7 @@ export class EventTemplateService {
     })
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     return this.prisma.eventTemplate.delete({ where: { id } })
   }
 }
