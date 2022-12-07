@@ -40,7 +40,7 @@ async function main() {
         }
     });
 
-    const superUser = await prisma.user.create( {
+    const superUser = await prisma.user.create({
         data: {
             email: 'super@consultbae.com',
             firstName: 'Super',
@@ -52,7 +52,7 @@ async function main() {
             password: await hash(`consultbae#123!`, 10)
         }
     });
-    
+
     await EventsSeed();
 
     console.info(`[+] Seeded Db`);
@@ -61,7 +61,22 @@ async function main() {
 
 async function EventsSeed() {
     await Promise.all([
-
+        prisma.eventStatus.createMany({
+            data: [
+                {
+                    name: 'Pending'
+                },
+                {
+                    name: 'Active'
+                },
+                {
+                    name: 'Onhold'
+                },
+                {
+                    name: 'Completed'
+                }
+            ]
+        })
     ])
 }
 
