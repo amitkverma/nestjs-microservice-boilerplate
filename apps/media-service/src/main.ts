@@ -1,20 +1,16 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+ import { Logger, ValidationPipe } from '@nestjs/common';
+ import { ConfigService } from '@nestjs/config';
+ import { NestFactory } from '@nestjs/core';
+ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+ import { ApplicationReadiness, initWinston, secureApplication } from '@spotlyt-backend/common';
+ import * as swStats from 'swagger-stats';
+ import { PrismaExceptionFilters } from '@spotlyt-backend/common'
+ 
+ import { AppModule } from './app/app.module';
 
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ApplicationReadiness, initWinston, secureApplication } from '@spotlyt-backend/common';
-import * as swStats from 'swagger-stats';
-import { PrismaExceptionFilters } from '@spotlyt-backend/common'
-
-import { AppModule } from './app/app.module';
 
 async function bootstrap() {
-  const app_name = "core_service";
+  const app_name = "media_service";
 
   const app = await NestFactory.create(AppModule, {
     logger: initWinston(app_name),
@@ -33,10 +29,10 @@ async function bootstrap() {
   const configPrefix = 'status';
 
   const config = new DocumentBuilder()
-    .setTitle('Core Service')
-    .setDescription('The core API description')
+    .setTitle('Media Service')
+    .setDescription('The Media API description')
     .setVersion('1.0')
-    .addTag('core')
+    .addTag('media')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`/${configPrefix}/docs`, app, document);
@@ -44,7 +40,7 @@ async function bootstrap() {
 
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('CORE_PORT', 3000);
+  const port = configService.get<number>('MEDIA_SERVICE_PORT', 7004);
   await app.listen(port);
   ApplicationReadiness.getInstance().isReady = true;
 

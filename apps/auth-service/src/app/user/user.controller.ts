@@ -19,18 +19,71 @@ export class UserController {
   }
 
   @Get('tenant/:id')
-  getUsersBelongingToATenant(@Param('id') id: string, @Query() { take, skip }: PaginationParams) {
+  getUsersBelongingToATenant(@Param('id') id: string, @Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
     return this.userService.findAll({
       where: {
-        tenantId: id
+        tenantId: id,
+        isDeleted: false,
+
+        AND: [
+          {
+            OR: [
+              {
+                firstName: {
+                  contains: query ?? '',
+                  mode: 'insensitive'
+                }
+              },
+              {
+                lastName: {
+                  contains: query ?? '',
+                  mode: 'insensitive'
+                }
+              },
+              {
+                email: {
+                  contains: query ?? '',
+                  mode: 'insensitive'
+                }
+              },
+            ],
+          }
+        ]
       },
       take: +take, skip: +skip
     })
   }
 
   @Get('tenant/:id/count')
-  getUsersBelongingToATenantCount(@Param('id') id: string) {
-    return this.userService.count({ tenantId: id, isDeleted: false });
+  getUsersBelongingToATenantCount(@Param('id') id: string, @Query() { query }: SearchQueryParams) {
+    return this.userService.count({
+      tenantId: id,
+      isDeleted: false,
+      AND: [
+        {
+          OR: [
+            {
+              firstName: {
+                contains: query ?? '',
+                mode: 'insensitive'
+              }
+            },
+            {
+              lastName: {
+                contains: query ?? '',
+                mode: 'insensitive'
+              }
+            },
+            {
+              email: {
+                contains: query ?? '',
+                mode: 'insensitive'
+              }
+            },
+          ],
+        }
+      ],
+    });
   }
 
   @Get('count')

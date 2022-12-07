@@ -43,3 +43,6 @@ logs/*
 logs/.gitkeep
 apps/**/logs
 libs/**/logs
+
+#uploads
+**/upload

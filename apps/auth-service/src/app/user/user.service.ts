@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '@spotlyt-backend/database';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -48,6 +48,14 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const { roleId, tenantId, password, ...userInfo } = createUserDto;
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: userInfo.email
+      }
+    });
+
+    if (user) { throw new HttpException(`User Already Exsists with This Email`, HttpStatus.FORBIDDEN) }
+    
     return this.prisma.user.create({
       data: {
         ...userInfo,

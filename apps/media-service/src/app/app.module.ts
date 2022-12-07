@@ -6,9 +6,7 @@ import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EmployeeModule } from './employee/employee.module';
-import { CompanyModule } from './company/company.module';
-import { TeamModule } from './team/team.module';
+import { MediaModule } from './s3Upload/media.module';
 
 const health_config: IHealthConfig = {
   host: 'localhost',
@@ -17,7 +15,7 @@ const health_config: IHealthConfig = {
 
 
 @Module({
-  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EmployeeModule, CompanyModule, TeamModule],
+  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), MediaModule],
   controllers: [AppController],
   providers: [AppService],
 })
