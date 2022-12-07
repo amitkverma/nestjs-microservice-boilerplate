@@ -60,7 +60,7 @@ export class EventService {
     });
   }
 
-  async getAllEventStatus(){
+  async getAllEventStatus() {
     return this.prisma.eventStatus.findMany();
   }
 
@@ -124,4 +124,18 @@ export class EventService {
   }
 
 
+  async getKanban(tenantId: string) {
+    return this.prisma.eventStatus.findMany({
+      include: {
+        Event: {
+          where: { tenantId },
+          include: {
+            eventTemplate: true,
+            notes: true,
+            eventStatus: true,
+          }
+        }
+      }
+    })
+  }
 }

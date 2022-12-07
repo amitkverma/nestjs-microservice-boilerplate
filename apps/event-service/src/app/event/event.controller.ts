@@ -33,6 +33,11 @@ export class EventController {
     });
   }
   
+  @Get('kanban/:tenantId')
+  getKanban(@Param('tenantId') tenantId: string){
+    return this.eventService.getKanban(tenantId)
+  }
+
   @Get('event-status')
   getEventStatus(){
     return this.eventService.getAllEventStatus();
