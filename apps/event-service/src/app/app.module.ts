@@ -7,6 +7,7 @@ import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventTemplateModule } from './event-template/event-template.module';
+import { EventModule } from './event/event.module';
 
 const health_config: IHealthConfig = {
   host: 'localhost',
@@ -15,7 +16,7 @@ const health_config: IHealthConfig = {
 
 
 @Module({
-  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EventTemplateModule],
+  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EventTemplateModule, EventModule],
   controllers: [AppController],
   providers: [AppService],
 })

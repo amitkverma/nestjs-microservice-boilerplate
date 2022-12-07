@@ -3,7 +3,6 @@ import { Prisma } from '@prisma/client';
 import {
     IsArray,
     IsNotEmpty,
-    IsObject,
     IsOptional,
     IsString,
     IsUUID,
