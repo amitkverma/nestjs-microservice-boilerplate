@@ -7,11 +7,6 @@ import {
 
 
 export class UpdateEventStatusDto {
-    @IsUUID()
-    @IsNotEmpty()
-    @ApiProperty()
-    eventId: string;
-
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
