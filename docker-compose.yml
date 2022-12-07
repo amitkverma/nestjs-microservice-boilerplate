@@ -23,6 +23,8 @@ services:
     environment:
       NODE_ENV: "development"
       PORT: 7001
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/spotlytdb?schema=public"
+      DATABASE_HOST: postgres
     networks:
       - spotlyt
     depends_on:
@@ -45,6 +47,7 @@ services:
         NODE_ENV: "development"
         BUILD_FLAG: ""
         PORT: 3000
+        DATABASE_HOST: postgres
     image: core-service:nx-dev
     hostname: core-service
     ports:
@@ -52,6 +55,7 @@ services:
     environment:
       NODE_ENV: "development"
       PORT: 3000
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/spotlytdb?schema=public"
     networks:
       - spotlyt
     depends_on:
@@ -72,8 +76,9 @@ services:
       dockerfile: ./apps/media-service/Dockerfile
       args:
         NODE_ENV: "development"
-        BUILD_FLAG: ""
         PORT: 7004
+        DATABASE_URL: "postgresql://postgres:password@postgres:5432/spotlytdb?schema=public"
+        DATABASE_HOST: postgres
     image: media-service:nx-dev
     hostname: media-service
     ports:
