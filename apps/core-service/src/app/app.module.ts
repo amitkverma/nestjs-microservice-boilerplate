@@ -9,6 +9,9 @@ import { AppService } from './app.service';
 import { EmployeeModule } from './employee/employee.module';
 import { CompanyModule } from './company/company.module';
 import { TeamModule } from './team/team.module';
+import { EventTemplateModule } from './event-template/event-template.module';
+import { EventModule } from './event/event.module';
+
 
 const health_config: IHealthConfig = {
   host: 'localhost',
@@ -17,7 +20,7 @@ const health_config: IHealthConfig = {
 
 
 @Module({
-  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EmployeeModule, CompanyModule, TeamModule],
+  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EmployeeModule, CompanyModule, TeamModule, EventTemplateModule, EventModule],
   controllers: [AppController],
   providers: [AppService],
 })
