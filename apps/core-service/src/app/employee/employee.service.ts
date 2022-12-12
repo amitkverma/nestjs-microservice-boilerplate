@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto, Employee } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { PrismaService } from '@spotlyt-backend/database';
@@ -10,6 +10,13 @@ export class EmployeeService {
   constructor(private prisma: PrismaService) { }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
+    const employee = this.prisma.employee.findFirst({
+      where: {
+        email: createEmployeeDto.email,
+        tenantId: createEmployeeDto.tenantId
+      }
+    });
+    if (employee) { throw new HttpException(`Employee Already Exsists`, HttpStatus.OK) }
     return this.prisma.employee.create({ data: { ...createEmployeeDto, status: 'Active' } });
   }
 
@@ -43,7 +50,7 @@ export class EmployeeService {
   }
 
   async update(id: string, updateEmployeeDto: UpdateEmployeeDto) {
-    if(updateEmployeeDto?.email){
+    if (updateEmployeeDto?.email) {
       delete updateEmployeeDto.email;
     }
     return this.prisma.employee.update({ where: { id }, data: updateEmployeeDto });

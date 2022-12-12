@@ -127,7 +127,7 @@ model Employee {
   middleName        String?        @db.VarChar(255)
   lastName          String         @db.VarChar(255)
   status            EmployeeStatus
-  email             String         @unique @db.VarChar(60)
+  email             String         @db.VarChar(60)
   phone             String?        @db.VarChar(60)
   gender            Gender
   dob               DateTime?
@@ -136,10 +136,10 @@ model Employee {
   isMarried         Boolean?
   weddingAniversary DateTime?
 
-  companyTitle   CompanyTitle @relation(fields: [companyTitleId], references: [name])
-  companyTitleId String       @db.VarChar(60)
-  team           Team         @relation(fields: [teamId], references: [name])
-  teamId         String       @db.VarChar(60)
+  companyTitle   CompanyTitle? @relation(fields: [companyTitleId], references: [name])
+  companyTitleId String?       @db.VarChar(60)
+  team           Team?         @relation(fields: [teamId], references: [name])
+  teamId         String?       @db.VarChar(60)
   tenant         Tenant       @relation(fields: [tenantId], references: [id])
   tenantId       String       @db.VarChar(60)
 
@@ -147,6 +147,8 @@ model Employee {
   createdBy  String?  @db.VarChar(60)
   modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
+
+  @@unique([tenantId, email])
 }
 
 model CompanyTitle {
@@ -163,4 +165,120 @@ model Team {
   isRemote    Boolean?
 
   employees Employee[]
+}
+
+// ===== Events Templates ====
+model EventTemplate {
+  id          String  @id @default(uuid())
+  name        String  @db.VarChar(255)
+  description String? @db.VarChar(255)
+  image       String? @db.VarChar(60)
+  instruction String?
+  howTos      String?
+  agenda      Json?
+
+  eventCategoryId String        @db.VarChar(60)
+  eventCategory   EventCategory @relation(fields: [eventCategoryId], references: [id])
+
+  events Event[]
+}
+
+model EventCategory {
+  id   String @id @default(uuid())
+  name String @db.VarChar(255)
+
+  eventTypeId String    @db.VarChar(60)
+  eventType   EventType @relation(fields: [eventTypeId], references: [id])
+
+  eventTemplates EventTemplate[]
+}
+
+model EventType {
+  id              String          @id @default(uuid())
+  name            String          @db.VarChar(255)
+  eventCategories EventCategory[]
+}
+
+// =============== Events ===============
+// Seed - Pending, Active, Onhold
+model EventStatus {
+  id    String  @id @default(uuid())
+  name  String  @unique @db.VarChar(255)
+  Event Event[]
+}
+
+model Event {
+  id String @id @default(uuid())
+
+  name        String? @db.VarChar(255)
+  description String? @db.VarChar(255)
+  image       String? @db.VarChar(60)
+
+  eventTemplateId String        @db.VarChar(60)
+  eventTemplate   EventTemplate @relation(fields: [eventTemplateId], references: [id])
+
+  eventStatusName String      @db.VarChar(255) // by default every created Event is pending
+  eventStatus     EventStatus @relation(fields: [eventStatusName], references: [name])
+
+  startAt          DateTime?
+  location         String?
+  endAt            DateTime?
+  isActive         Boolean?  @default(true)
+  isNotificationOn Boolean?  @default(true)
+  allowPerformers  Boolean?  @default(true)
+  allowRewards     Boolean?  @default(true)
+
+  tenantId String @db.VarChar(60) // which Client is having this event
+
+  attachments Attachment[]
+  notes       Note[]
+  audiences   Audience[]
+  participants Participant[]
+}
+
+enum ParticipantType {
+  Host
+  Guest
+  Attendee
+}
+
+model Participant {
+  id              String          @id @default(uuid())
+  isGuest         Boolean?        @default(false)
+  hasJoined       Boolean?        @default(false)
+  participantType ParticipantType @default(Guest)
+  isPerforming    Boolean?        @default(false)
+
+  userId String @db.VarChar(255)
+
+  eventId String @db.VarChar(60)
+  event   Event  @relation(fields: [eventId], references: [id])
+}
+
+model Audience {
+  id       String @id @default(uuid())
+  teamName String @db.VarChar(255)
+
+  eventId String @db.VarChar(60)
+  event   Event  @relation(fields: [eventId], references: [id])
+}
+
+model Note {
+  id     String @id @default(uuid())
+  text   String @db.VarChar(255)
+  userId String @db.VarChar(255)
+
+  eventId String @db.VarChar(60)
+  event   Event  @relation(fields: [eventId], references: [id])
+}
+
+model Attachment {
+  id      String @id @default(uuid())
+  name    String @db.VarChar(255)
+  mimeTpe String @db.VarChar(255)
+  key     String @db.VarChar(255)
+  url     String @db.VarChar(255)
+
+  eventId String @db.VarChar(60)
+  event   Event  @relation(fields: [eventId], references: [id])
 }

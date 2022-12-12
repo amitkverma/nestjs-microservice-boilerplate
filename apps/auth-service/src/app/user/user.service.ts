@@ -54,7 +54,7 @@ export class UserService {
       }
     });
 
-    if (user) { throw new HttpException(`User Already Exsists with This Email`, HttpStatus.FORBIDDEN) }
+    if (user) { throw new HttpException(`User Already Exsists with This Email`, HttpStatus.OK) }
     
     return this.prisma.user.create({
       data: {
