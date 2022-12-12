@@ -60,6 +60,16 @@ async function main() {
 
 
 async function EventsSeed() {
+    const onlneEventType = await prisma.eventType.create({
+        data: {
+            name: 'Online Event'
+        }
+    })
+    const offlineEventType = await prisma.eventType.create({
+        data: {
+            name: 'Offline Event'
+        }
+    })
     await Promise.all([
         prisma.eventStatus.createMany({
             data: [
@@ -76,7 +86,18 @@ async function EventsSeed() {
                     name: 'Completed'
                 }
             ]
-        })
+        }),
+        prisma.eventCategory.createMany({
+            data: [{
+                eventTypeId: onlneEventType.id,
+                name: 'Yoga'
+            },
+            {
+                eventTypeId: offlineEventType.id,
+                name: 'Game'
+            }]
+        }),
+        
     ])
 }
 
