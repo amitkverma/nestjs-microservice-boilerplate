@@ -15,9 +15,9 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const errorObj = {
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-            error: 'Error',
-            message: 'Internal Server Error',
+            statusCode: (exception as IHTTPError).status,
+            error: (exception as HttpException).name,
+            message: (exception as HttpException).message,
             meta: null
         }
         if (exception instanceof NotFoundError) {
@@ -27,12 +27,12 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         } else if (exception instanceof PrismaClientValidationError) {
             errorObj.error = (exception as PrismaClientValidationError).name;
             errorObj.statusCode = HttpStatus.UNPROCESSABLE_ENTITY;
-            errorObj.message = (exception as PrismaClientValidationError).message
+            errorObj.message = (exception as PrismaClientValidationError).message;
         }
         else if (exception instanceof PrismaClientUnknownRequestError) {
             errorObj.error = (exception as PrismaClientUnknownRequestError).name;
             errorObj.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-            errorObj.message = (exception as PrismaClientUnknownRequestError).message
+            errorObj.message = (exception as PrismaClientUnknownRequestError).message;
         }
         else if (exception instanceof PrismaClientKnownRequestError) {
             errorObj.error = 'Request Error';
@@ -40,6 +40,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             errorObj.message = (exception as PrismaClientKnownRequestError).message
             errorObj.meta = (exception as PrismaClientKnownRequestError).meta
         }
-        return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ statusCode: (exception as IHTTPError).status, error: (exception as HttpException).name, message: (exception as HttpException).message, meta: (exception as HttpException).cause });
+        return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ ...errorObj });
     }
 }
