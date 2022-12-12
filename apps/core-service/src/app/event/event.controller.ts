@@ -19,19 +19,6 @@ export class EventController {
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventService.create(createEventDto);
   }
-
-  @Get('tenant/:tenantId')
-  findAll(@Query() { take, skip }: PaginationParams,
-    @Query() { query }: SearchQueryParams, @Param('tenantId') tenantId: string) {
-    return this.eventService.findAll(tenantId, {
-      skip: +skip, take: +take, where: {
-        name: {
-          contains: query ?? '',
-          mode: 'insensitive'
-        }
-      }
-    });
-  }
   
   @Get('kanban/:tenantId')
   getKanban(@Param('tenantId') tenantId: string){
@@ -41,16 +28,6 @@ export class EventController {
   @Get('event-status')
   getEventStatus(){
     return this.eventService.getAllEventStatus();
-  }
-
-  @Get('count/tenant/:tenantId')
-  count(@Query() { query }: SearchQueryParams, @Param('tenantId') tenantId: string) {
-    return this.eventService.count(tenantId, {
-      name: {
-        contains: query ?? '',
-        mode: 'insensitive'
-      }
-    })
   }
 
   @Get(':id')

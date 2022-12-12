@@ -17,32 +17,6 @@ export class EventService {
     return this.prisma.event.create({ data: { ...createEventDto, eventStatusName: 'Pending' } });
   }
 
-  async findAll(tenantId: string, params?: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.EventWhereUniqueInput;
-    where?: Prisma.EventWhereInput;
-    orderBy?: Prisma.EventOrderByWithRelationInput;
-  }) {
-    return this.prisma.event.findMany({
-      ...params, where: {
-        ...params.where,
-        tenantId: tenantId
-      }
-    });
-  }
-
-  async count(tenantId: string, where?: Prisma.EventWhereInput) {
-    return {
-      count: await this.prisma.event.count({
-        where: {
-          ...where,
-          tenantId: tenantId
-        }
-      })
-    }
-  }
-
   async findOne(id: string) {
     return this.prisma.event.findFirst({
       where: { id }, include: {
