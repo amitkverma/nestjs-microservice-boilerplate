@@ -40,6 +40,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             errorObj.message = (exception as PrismaClientKnownRequestError).message
             errorObj.meta = (exception as PrismaClientKnownRequestError).meta
         }
-        return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ ...errorObj });
+        return response.status(errorObj.statusCode).json({ ...errorObj });
     }
 }
