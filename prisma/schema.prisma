@@ -127,7 +127,7 @@ model Employee {
   middleName        String?        @db.VarChar(255)
   lastName          String         @db.VarChar(255)
   status            EmployeeStatus
-  email             String         @unique @db.VarChar(60)
+  email             String         @db.VarChar(60)
   phone             String?        @db.VarChar(60)
   gender            Gender
   dob               DateTime?
@@ -136,10 +136,10 @@ model Employee {
   isMarried         Boolean?
   weddingAniversary DateTime?
 
-  companyTitle   CompanyTitle @relation(fields: [companyTitleId], references: [name])
-  companyTitleId String       @db.VarChar(60)
-  team           Team         @relation(fields: [teamId], references: [name])
-  teamId         String       @db.VarChar(60)
+  companyTitle   CompanyTitle? @relation(fields: [companyTitleId], references: [name])
+  companyTitleId String?       @db.VarChar(60)
+  team           Team?         @relation(fields: [teamId], references: [name])
+  teamId         String?       @db.VarChar(60)
   tenant         Tenant       @relation(fields: [tenantId], references: [id])
   tenantId       String       @db.VarChar(60)
 
@@ -147,6 +147,8 @@ model Employee {
   createdBy  String?  @db.VarChar(60)
   modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
+
+  @@unique([tenantId, email])
 }
 
 model CompanyTitle {

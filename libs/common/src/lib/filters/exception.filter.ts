@@ -1,8 +1,13 @@
-import { ArgumentsHost, Catch, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpException, HttpStatus } from '@nestjs/common';
 import { NotFoundError, PrismaClientValidationError, PrismaClientUnknownRequestError, PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { BaseExceptionFilter } from '@nestjs/core';
 
 import { Response } from 'express';
+
+interface IHTTPError{
+    status: number,
+    message: string
+}
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
@@ -35,6 +40,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             errorObj.message = (exception as PrismaClientKnownRequestError).message
             errorObj.meta = (exception as PrismaClientKnownRequestError).meta
         }
-        return response.status(HttpStatus.NOT_FOUND).json({ statusCode: errorObj.statusCode, error: errorObj.error, message: errorObj.message, meta: errorObj.meta });
+        return response.status(HttpStatus.NOT_FOUND).json({ statusCode: (exception as IHTTPError).status, error: (exception as HttpException).name, message: (exception as HttpException).message, meta: (exception as HttpException).cause });
     }
 }
