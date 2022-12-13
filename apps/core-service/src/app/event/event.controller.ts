@@ -7,7 +7,6 @@ import { CreateEventNoteDto, UpdateEventNoteDto } from './dto/create-note.dto';
 import { CreateEventAttachmentDto } from './dto/create-attachment.dto';
 import { CreateEventAudianceDto } from './dto/create-audiance.dto';
 import { CreateEventParticipantDto } from './dto/create-event-participant.dto';
-import { PaginationParams, SearchQueryParams } from '@spotlyt-backend/data/dtos';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('event')
@@ -79,14 +78,14 @@ export class EventController {
   }
 
 
-  @Put('event-audiance')
+  @Put('event-audience')
   addEventAudience(@Body() createEventAudianceDto: CreateEventAudianceDto) {
     return this.eventService.addEventAudience(createEventAudianceDto);
   }
 
-  @Delete('event-audiance/:id')
-  removeEventAudience(@Param('id') id: string) {
-    return this.eventService.removeEventAudience(id);
+  @Delete('event-audiance/:eventId/team-name/:teamName')
+  removeEventAudience(@Param('eventId') eventId: string, @Param('teamName') teamName: string) {
+    return this.eventService.removeEventAudience(eventId, teamName);
   }
 
   @Put('event-participant')
@@ -94,9 +93,9 @@ export class EventController {
     return this.eventService.addEventParticipant(createEventParticipantDto);
   }
 
-  @Delete('event-participant/:id')
-  removeEventParticipant(@Param('id') id: string) {
-    return this.eventService.removeEventParticipant(id);
+  @Delete('event-participant/:eventId/user/:userId')
+  removeEventParticipant(@Param('eventId') eventId: string, @Param('userId') userId: string) {
+    return this.eventService.removeEventParticipant(eventId, userId);
   }
 
 
