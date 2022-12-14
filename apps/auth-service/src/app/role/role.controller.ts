@@ -27,7 +27,6 @@ export class RoleController {
 
   @Get()
   findAll(@Query() { take, skip }: PaginationParams, @Query() { query }: SearchQueryParams) {
-    console.log('query: ', query);
     return this.roleService.findAll({
       take: +take, skip: +skip, where: {
         name: {

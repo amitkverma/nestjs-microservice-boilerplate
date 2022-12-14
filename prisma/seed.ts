@@ -31,7 +31,7 @@ async function main() {
             name: 'Consultbae',
             auth: {
                 create: {
-                    accessTokenExpiration: '10m',
+                    accessTokenExpiration: '2d',
                     name: 'Consultbae Auth',
                     refreshTokenExpiration: '7d',
                     secrate: 'Consultbae&&&^^^'
@@ -54,10 +54,26 @@ async function main() {
     });
 
     await EventsSeed();
+    await EmployeeSeed();
 
     console.info(`[+] Seeded Db`);
 }
 
+
+async function EmployeeSeed(){
+    await Promise.all([
+        prisma.companyTitle.create({
+        data: {
+            name: 'Default',
+        },
+        }),
+        prisma.team.create({
+        data: {
+            name: 'Default',
+        },
+        }),
+    ]);
+}
 
 async function EventsSeed() {
     const onlneEventType = await prisma.eventType.create({
