@@ -148,7 +148,7 @@ export class EventService {
   }
 
   async updateEventStatus(id: string, updateEventStatus: UpdateEventStatusDto) {
-    console.log(await this.prisma.event.findFirst({ where: { id } }));
+    // console.log(await this.prisma.event.findFirst({ where: { id } }));
     return this.prisma.event.update({
       where: { id },
       data: {
