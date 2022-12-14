@@ -10,7 +10,7 @@ export class EmployeeService {
   constructor(private prisma: PrismaService) { }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = this.prisma.employee.findFirst({
+    const employee = await this.prisma.employee.findFirst({
       where: {
         email: createEmployeeDto.email,
         tenantId: createEmployeeDto.tenantId

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
@@ -10,6 +10,10 @@ export class TenantService {
 
   async create(createTenantDto: CreateTenantDto) {
     const { auth, ...tenantData } = createTenantDto;
+
+    const tenant = await this.prisma.tenant.findFirst({ where: { name: tenantData.name } });
+    if(tenant) { throw new HttpException(`Comapany Already Exsists`, HttpStatus.OK) }
+
     return this.prisma.tenant.create({
       data: {
         ...tenantData, auth: {
@@ -49,6 +53,9 @@ export class TenantService {
 
   async update(id: string, updateTenantDto: UpdateTenantDto) {
     const { auth, ...tenantData } = updateTenantDto;
+    if(tenantData.name){
+      delete tenantData.name
+    }
     if (tenantData) {
       await this.prisma.tenant.update({ where: { id }, data: tenantData })
     }
