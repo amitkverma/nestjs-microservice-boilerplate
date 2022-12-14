@@ -31,7 +31,7 @@ async function main() {
             name: 'Consultbae',
             auth: {
                 create: {
-                    accessTokenExpiration: '10m',
+                    accessTokenExpiration: '2d',
                     name: 'Consultbae Auth',
                     refreshTokenExpiration: '7d',
                     secrate: 'Consultbae&&&^^^'
