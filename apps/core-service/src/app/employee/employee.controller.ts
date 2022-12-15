@@ -1,22 +1,40 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipeBuilder,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto, Employee } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { PaginationParams, SearchQueryParams } from '@spotlyt-backend/data/dtos';
+import {
+  PaginationParams,
+  SearchQueryParams,
+} from '@spotlyt-backend/data/dtos';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { Multer } from 'multer';
 
-
 @ApiTags('Employee Controller')
 @Controller('employee')
 export class EmployeeController {
-  constructor(private readonly employeeService: EmployeeService) { }
+  constructor(private readonly employeeService: EmployeeService) {}
 
   @Get('tenant/:tenantId/employee/count')
   getEmployeesBelongingToATenantCount(
-    @Query() { query }: SearchQueryParams, @Param('tenantId') tenantId: string) {
+    @Query() { query }: SearchQueryParams,
+    @Param('tenantId') tenantId: string
+  ) {
     return this.employeeService.count({
       AND: [
         {
@@ -24,62 +42,67 @@ export class EmployeeController {
             {
               firstName: {
                 contains: query ?? '',
-                mode: 'insensitive'
-              }
+                mode: 'insensitive',
+              },
             },
             {
               email: {
                 contains: query ?? '',
-                mode: 'insensitive'
-              }
+                mode: 'insensitive',
+              },
             },
             {
               lastName: {
                 contains: query ?? '',
-                mode: 'insensitive'
-              }
-            }
-          ]
+                mode: 'insensitive',
+              },
+            },
+          ],
         },
         {
-          tenantId
-        }
-      ]
-    },)
+          tenantId,
+        },
+      ],
+    });
   }
 
   @Get('tenant/:tenantId/employee')
-  getEmployeesBelongingToATenant(@Query() { take, skip }: PaginationParams,
-    @Query() { query }: SearchQueryParams, @Param('tenantId') tenantId: string) {
+  getEmployeesBelongingToATenant(
+    @Query() { take, skip }: PaginationParams,
+    @Query() { query }: SearchQueryParams,
+    @Param('tenantId') tenantId: string
+  ) {
     return this.employeeService.findAll({
-      take: +take, skip: +skip, where: {
+      take: +take,
+      skip: +skip,
+      where: {
         AND: [
           {
             OR: [
               {
                 firstName: {
                   contains: query ?? '',
-                  mode: 'insensitive'
-                }
+                  mode: 'insensitive',
+                },
               },
               {
                 email: {
                   contains: query ?? '',
-                  mode: 'insensitive'
-                }
+                  mode: 'insensitive',
+                },
               },
               {
                 lastName: {
                   contains: query ?? '',
-                  mode: 'insensitive'
-                }
-              }
-            ]
+                  mode: 'insensitive',
+                },
+              },
+            ],
           },
           {
-            tenantId
-          }
-        ]
+            tenantId,
+          },
+        ],
       },
     });
   }
@@ -91,54 +114,57 @@ export class EmployeeController {
         {
           firstName: {
             contains: query ?? '',
-            mode: 'insensitive'
-          }
+            mode: 'insensitive',
+          },
         },
         {
           email: {
             contains: query ?? '',
-            mode: 'insensitive'
-          }
+            mode: 'insensitive',
+          },
         },
         {
           lastName: {
             contains: query ?? '',
-            mode: 'insensitive'
-          }
-        }
-      ]
+            mode: 'insensitive',
+          },
+        },
+      ],
     });
   }
 
   @Get()
-  findAll(@Query() { take, skip }: PaginationParams,
-    @Query() { query }: SearchQueryParams) {
+  findAll(
+    @Query() { take, skip }: PaginationParams,
+    @Query() { query }: SearchQueryParams
+  ) {
     return this.employeeService.findAll({
-      take: +take, skip: +skip, where: {
+      take: +take,
+      skip: +skip,
+      where: {
         OR: [
           {
             firstName: {
               contains: query ?? '',
-              mode: 'insensitive'
-            }
+              mode: 'insensitive',
+            },
           },
           {
             email: {
               contains: query ?? '',
-              mode: 'insensitive'
-            }
+              mode: 'insensitive',
+            },
           },
           {
             lastName: {
               contains: query ?? '',
-              mode: 'insensitive'
-            }
-          }
-        ]
+              mode: 'insensitive',
+            },
+          },
+        ],
       },
     });
   }
-
 
   @UseInterceptors(FileInterceptor('file'))
   @Post('bulk/:tenantId')
@@ -156,16 +182,23 @@ export class EmployeeController {
   })
   async uploadFileAndPassValidation(
     @Param('tenantId') tenantId: string,
-    @UploadedFile(new ParseFilePipeBuilder()
-      .addFileTypeValidator({
-        fileType: 'csv',
-      })
-      .build()) file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'csv',
+        })
+        .build()
+    )
+    file: Express.Multer.File
   ) {
-    this.employeeService.createBulk(file.filename, tenantId);
-    return {
-      file: file.filename,
-    };
+    try {
+      return this.employeeService.createBulk(file.filename, tenantId);
+    } catch (err: unknown) {
+      throw new HttpException(
+        (err as Error).message,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   @Post()
@@ -179,7 +212,10 @@ export class EmployeeController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEmployeeDto: UpdateEmployeeDto
+  ) {
     return this.employeeService.update(id, updateEmployeeDto);
   }
 

@@ -86,8 +86,8 @@ export class EmployeeService {
       this.prisma.companyTitle.createMany({ skipDuplicates: true, data: companyTitlesBulkData }),
       this.prisma.team.createMany({ skipDuplicates: true, data: teamsBulkData }),
     ])
-    return this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData })
-
+    await this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData });
+    return true;
   }
 
 
