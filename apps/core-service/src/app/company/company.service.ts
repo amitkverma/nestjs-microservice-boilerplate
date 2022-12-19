@@ -12,7 +12,7 @@ export class CompanyService {
     return this.prisma.companyTitle.create({
       data: {
         ...createCompanyDto,
-        name: createCompanyDto.name.split(' ').join('_').toLocaleLowerCase()
+        name: createCompanyDto.name
       }
     });
   }
