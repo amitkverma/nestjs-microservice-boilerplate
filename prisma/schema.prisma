@@ -137,9 +137,9 @@ model Employee {
   weddingAniversary DateTime?
 
   companyTitle   CompanyTitle? @relation(fields: [companyTitleId], references: [name])
-  companyTitleId String?       @db.VarChar(60)
+  companyTitleId String?       @default("Default") @db.VarChar(60)
   team           Team?         @relation(fields: [teamId], references: [name])
-  teamId         String?       @db.VarChar(60)
+  teamId         String?       @default("Default") @db.VarChar(60)
   tenant         Tenant       @relation(fields: [tenantId], references: [id])
   tenantId       String       @db.VarChar(60)
 

@@ -16,7 +16,7 @@ export class EmployeeService {
         tenantId: createEmployeeDto.tenantId
       }
     });
-    if (employee) { throw new HttpException(`Employee Already Exsists`, HttpStatus.OK) }
+    if (employee) { throw new HttpException(`Employee Already Exsists`, HttpStatus.CONFLICT) }
     return this.prisma.employee.create({ data: { ...createEmployeeDto, status: 'Active' } });
   }
 
@@ -66,10 +66,14 @@ export class EmployeeService {
     const companyTitles = df?.['Role']?.unique()?.values;
 
     const teamsBulkData = [];
-    teams?.map((team: string) => teamsBulkData.push({ name: team }));
+    teams?.map((team: string) => {
+      if(team) teamsBulkData.push({ name: team });
+    });
 
     const companyTitlesBulkData = [];
-    companyTitles?.map((companyTitle: string) => companyTitlesBulkData.push({ name: companyTitle }));
+    companyTitles?.map((companyTitle: string) => {
+      if(companyTitle) companyTitlesBulkData.push({ name: companyTitle });
+    });
 
 
     const employeesBulkData = [];
@@ -78,12 +82,12 @@ export class EmployeeService {
       employees?.map((employee: any) => employeesBulkData.push(this.employeeMapperFromCsvData(tenantId, employee)));
     }
 
-    return Promise.all([
+    await Promise.all([
       this.prisma.companyTitle.createMany({ skipDuplicates: true, data: companyTitlesBulkData }),
       this.prisma.team.createMany({ skipDuplicates: true, data: teamsBulkData }),
-      this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData })
     ])
-
+    await this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData });
+    return true;
   }
 
 
@@ -91,14 +95,14 @@ export class EmployeeService {
     const name = payload?.['Name']?.split(' ');
     return {
       dob: Date.parse(payload?.['Birth Date']) ? payload?.['Birth Date'] : null,
-      companyTitleId: payload?.['Role'],
+      companyTitleId: payload?.['Role'] ?? "Default",
       email: payload?.['Email id'],
       phone: payload?.['Phone Number']?.toString() ?? null,
       firstName: name?.[0] ?? '',
       lastName: name?.[1] ?? '',
       hiredOn: Date.parse(payload?.['Joining Date']) ? payload?.['Joining Date'] : null,
       picture: payload?.['Picture'] ?? null,
-      teamId: payload?.['Department'],
+      teamId: payload?.['Department'] ?? "Default",
       gender: payload?.['Gender'] ?? 'Male',
       status: 'Active',
       tenantId: tenantId,

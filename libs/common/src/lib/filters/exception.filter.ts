@@ -15,7 +15,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const errorObj = {
-            statusCode: (exception as IHTTPError).status,
+            statusCode: (exception as IHTTPError).status ?? HttpStatus.INTERNAL_SERVER_ERROR,
             error: (exception as HttpException).name,
             message: (exception as HttpException).message,
             meta: null

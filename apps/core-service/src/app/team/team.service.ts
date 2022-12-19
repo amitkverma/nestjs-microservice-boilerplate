@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { PrismaService } from '@spotlyt-backend/database';
@@ -10,6 +10,8 @@ export class TeamService {
   constructor(private prisma: PrismaService) { }
 
   async create(createTeamDto: CreateTeamDto) {
+    const team = await this.prisma.team.findFirst({where: {name: createTeamDto.name}});
+    if(team) throw new HttpException(`This Team already Exsists`, HttpStatus.CONFLICT);
     return this.prisma.team.create({ data: createTeamDto });
   }
 

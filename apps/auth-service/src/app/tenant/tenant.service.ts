@@ -12,7 +12,7 @@ export class TenantService {
     const { auth, ...tenantData } = createTenantDto;
 
     const tenant = await this.prisma.tenant.findFirst({ where: { name: tenantData.name } });
-    if(tenant) { throw new HttpException(`Comapany Already Exsists`, HttpStatus.OK) }
+    if(tenant) { throw new HttpException(`Comapany Already Exsists`, HttpStatus.CONFLICT) }
 
     return this.prisma.tenant.create({
       data: {
