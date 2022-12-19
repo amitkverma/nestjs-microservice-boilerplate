@@ -16,7 +16,7 @@ export class EmployeeService {
         tenantId: createEmployeeDto.tenantId
       }
     });
-    if (employee) { throw new HttpException(`Employee Already Exsists`, HttpStatus.OK) }
+    if (employee) { throw new HttpException(`Employee Already Exsists`, HttpStatus.CONFLICT) }
     return this.prisma.employee.create({ data: { ...createEmployeeDto, status: 'Active' } });
   }
 

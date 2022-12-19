@@ -14,7 +14,7 @@ export class CompanyService {
     });
     if (compantTitle)
       throw new HttpException(
-        `This name already Exsists`,
+        `This Role Title already Exsists`,
         HttpStatus.CONFLICT
       );
     return this.prisma.companyTitle.create({
