@@ -180,6 +180,16 @@ export class EventService {
   }
 
   async addEventAudience(audianceDto: CreateEventAudianceDto) {
+    const audiance = await this.prisma.audience.findFirst({
+      where: {
+        eventId: audianceDto.eventId,
+        teamName: audianceDto.teamName,
+      },
+    });
+    if (!audiance) {
+      throw new HttpException(`Audience Already Exist`, HttpStatus.CONFLICT);
+    }
+
     return this.prisma.audience.create({ data: audianceDto });
   }
   async removeEventAudience(eventId: string, teamName: string) {
@@ -196,6 +206,15 @@ export class EventService {
   }
 
   async addEventParticipant(eventParticipantDto: CreateEventParticipantDto) {
+    const participant = await this.prisma.participant.findFirst({
+      where: {
+        eventId: eventParticipantDto.eventId,
+        userId: eventParticipantDto.userId,
+      },
+    });
+    if (participant) {
+      throw new HttpException(`Participant Already Exist`, HttpStatus.CONFLICT);
+    }
     return this.prisma.participant.create({ data: eventParticipantDto });
   }
   async removeEventParticipant(eventId: string, userId: string) {
