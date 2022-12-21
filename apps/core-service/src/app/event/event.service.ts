@@ -186,7 +186,7 @@ export class EventService {
         teamName: audianceDto.teamName,
       },
     });
-    if (!audiance) {
+    if (audiance) {
       throw new HttpException(`Audience Already Exist`, HttpStatus.CONFLICT);
     }
 
