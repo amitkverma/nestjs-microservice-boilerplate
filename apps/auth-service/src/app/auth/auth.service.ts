@@ -45,7 +45,7 @@ export class AuthService {
             }, JWT_SECRATE)
         }
 
-        throw new HttpException('User Invalid', HttpStatus.NOT_FOUND)
+        throw new HttpException('User Credentials Wrong', HttpStatus.NOT_FOUND)
     }
 
     async refresh(refreshToken: string, userId: string) {

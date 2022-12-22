@@ -253,6 +253,8 @@ model Participant {
 
   eventId String @db.VarChar(60)
   event   Event  @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
 }
 
 model Audience {
@@ -261,6 +263,8 @@ model Audience {
 
   eventId String @db.VarChar(60)
   event   Event  @relation(fields: [eventId], references: [id])
+
+  @@unique([teamName, eventId])
 }
 
 model Note {
