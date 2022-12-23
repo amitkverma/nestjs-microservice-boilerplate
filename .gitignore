@@ -46,3 +46,7 @@ libs/**/logs
 
 #uploads
 **/upload
+
+
+# not needed
+**/.env

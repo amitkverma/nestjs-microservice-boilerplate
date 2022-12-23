@@ -31,9 +31,10 @@ export class EventTemplateService {
       where: { id }, include: {
         eventCategory: {
           include: {
-            eventType: true
+            eventType: true,
           }
-        }
+        },
+        medias: true
       }
     });
   }

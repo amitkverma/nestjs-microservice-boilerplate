@@ -2,10 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
     IsNotEmpty,
     IsString,
-    IsUUID,
 } from 'class-validator';
-
-export class CreateEventAttachmentDto {
+export class CreateEventMediaDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
@@ -17,20 +15,23 @@ export class CreateEventAttachmentDto {
     @ApiProperty()
     mimeType: string;
 
+
+
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     key: string;
+
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     url: string;
 
-    @IsUUID()
+
+    @IsString()
     @IsNotEmpty()
     @ApiProperty()
     eventId: string;
-    
-}
 
+}
