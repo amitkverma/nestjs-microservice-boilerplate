@@ -9,7 +9,9 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ApplicationReadiness, initWinston, secureApplication } from '@spotlyt-backend/common';
 import * as swStats from 'swagger-stats';
-import { PrismaExceptionFilters } from '@spotlyt-backend/common'
+import { PrismaExceptionFilters } from '@spotlyt-backend/common';
+import { AUTHENTICATION_FORMAT, AUTHENTICATION_SCHEME } from '@spotlyt-backend/data/constants';
+
 
 import { AppModule } from './app/app.module';
 
@@ -37,6 +39,10 @@ async function bootstrap() {
     .setDescription('The core API description')
     .setVersion('1.0')
     .addTag('core')
+    .addBearerAuth(
+      { type: 'http', scheme: AUTHENTICATION_SCHEME, bearerFormat: AUTHENTICATION_FORMAT },
+      'jwt',
+     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`/${configPrefix}/docs`, app, document);
