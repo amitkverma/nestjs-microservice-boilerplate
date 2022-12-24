@@ -11,9 +11,11 @@ import {
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from '@spotlyt-backend/data/dtos';
 import { EventMediaStatus } from '@prisma/client';
+import { Authenticate } from '@spotlyt-backend/common';
+import { jwtUser } from '@spotlyt-backend/data/interfaces';
 const baseURL = 'employee-media';
 @ApiTags('employee-medias')
 @Controller(baseURL)
@@ -64,12 +66,13 @@ export class MediaController {
 
 
 
-  @Get('tenant/:tenantId')
+  @Get('tenant')
+  @ApiBearerAuth('jwt')
   findAll(
-    @Param('tenantId') tenantId: string,
+    @Authenticate() currentUser: jwtUser
   ) {
-    this.logger.log(`Endpoint tenant/${tenantId}`)
-    return this.mediaService.eventCategoryInfoMedias(tenantId);
+    this.logger.log(`Endpoint tenant/${currentUser.tenantId}`)
+    return this.mediaService.eventCategoryInfoMedias(currentUser.tenantId);
   }
 
   @Get(':id')
