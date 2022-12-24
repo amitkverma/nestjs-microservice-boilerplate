@@ -11,6 +11,7 @@ import { CompanyModule } from './company/company.module';
 import { TeamModule } from './team/team.module';
 import { EventTemplateModule } from './event-template/event-template.module';
 import { EventModule } from './event/event.module';
+import { MediaModule } from './media/media.module';
 
 
 const health_config: IHealthConfig = {
@@ -20,7 +21,7 @@ const health_config: IHealthConfig = {
 
 
 @Module({
-  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EmployeeModule, CompanyModule, TeamModule, EventTemplateModule, EventModule],
+  imports: [CoreConfig, ConfigModule, CommonModule.register({ health: health_config }), EmployeeModule, CompanyModule, TeamModule, EventTemplateModule, EventModule, MediaModule],
   controllers: [AppController],
   providers: [AppService],
 })
