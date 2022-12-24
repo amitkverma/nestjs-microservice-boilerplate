@@ -12,6 +12,9 @@ interface ICategoriedEventData {
   endAt: Date;
   eventTemplate: {
       eventCategory: EventCategory;
+      name: string;
+      description: string;
+      image: string;
   };
   stats?: Object;
   eventEmployeeMedia: {
@@ -94,7 +97,7 @@ export class MediaService {
         startAt: true,
         endAt: true,
         eventTemplate: {
-          select: {eventCategory: true}
+          select: {eventCategory: true, name: true, description: true, image: true}
         },
         eventEmployeeMedia: {
           select: {
