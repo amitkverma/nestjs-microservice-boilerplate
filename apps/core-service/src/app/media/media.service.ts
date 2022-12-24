@@ -32,15 +32,12 @@ export class MediaService {
     const eventMedias = await this.prisma.eventEmployeesMedia.create({
       data: mediaPayloadDto,
     });
+    const mediasBulkData = medias.map(item => ({...item, eventEmployeeMediaId: eventMedias.id}));
 
-    for (const media of medias) {
-      await this.prisma.eventEmployeeMediaListItem.create({
-        data: {
-          ...media,
-          eventEmployeeMediaId: eventMedias.id,
-        },
-      });
-    }
+    await this.prisma.eventEmployeeMediaListItem.createMany({
+      data: mediasBulkData
+    });
+   
     return eventMedias;
   }
 

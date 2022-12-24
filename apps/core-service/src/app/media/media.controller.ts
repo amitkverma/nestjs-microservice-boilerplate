@@ -14,9 +14,9 @@ import { CreateMediaDto } from './dto/create-media.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PaginationParams } from '@spotlyt-backend/data/dtos';
 import { EventMediaStatus } from '@prisma/client';
-
+const baseURL = 'employee-media';
 @ApiTags('employee-medias')
-@Controller('employee-media')
+@Controller(baseURL)
 export class MediaController {
   private readonly logger = new Logger(MediaController.name);
 
@@ -24,6 +24,7 @@ export class MediaController {
 
   @Post()
   create(@Body() createMediaDto: CreateMediaDto) {
+    this.logger.log(`POST ${baseURL} - Create`);
     return this.mediaService.create(createMediaDto);
   }
 
@@ -40,6 +41,7 @@ export class MediaController {
     @Query() { take, skip }: PaginationParams,
     @Query('status') status?: string
   ) {
+    this.logger.log(`POST ${baseURL}/event/${eventId} - findAllMediasOfAEventBasedOnStatus`);
     return this.mediaService.findAllMediasOfAEventBasedOnStatus(eventId, (status as EventMediaStatus ?? "Review"), {take, skip});
   }
 
