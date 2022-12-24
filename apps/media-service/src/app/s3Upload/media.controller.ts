@@ -5,7 +5,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { Multer } from 'multer';
 
-
 @Controller('upload')
 @ApiTags('upload')
 export class MediaController {
