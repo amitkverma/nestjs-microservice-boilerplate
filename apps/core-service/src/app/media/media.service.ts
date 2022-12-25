@@ -66,6 +66,25 @@ export class MediaService {
       include: {
         employee: true,
         medias: true,
+        event: {
+          select: {
+            name: true,
+            description: true,
+            image: true,
+            eventTemplate: {
+              select: {
+                name: true,
+                description: true,
+                image: true,
+                eventCategory: {
+                  select: {
+                    name: true
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       take: paginationParams.take,
       skip: paginationParams.skip
