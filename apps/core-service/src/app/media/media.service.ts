@@ -57,8 +57,17 @@ export class MediaService {
     })
   }
 
-  findAllMediasOfAEventBasedOnStatus(eventId: string, status: EventMediaStatus, paginationParams: {take: number, skip: number}){
-    return this.prisma.eventEmployeesMedia.findMany({
+  async findAllMediasOfAEventBasedOnStatus(eventId: string, status: EventMediaStatus, paginationParams: {take: number, skip: number}){
+    const eventData = await this.prisma.event.findFirst({
+      where: {
+        id: eventId
+      },
+      include: {
+        eventTemplate: true,
+        eventStatus: true
+      }
+    });
+    const eventMedias = await this.prisma.eventEmployeesMedia.findMany({
       where: {
         eventId,
         status
@@ -88,7 +97,11 @@ export class MediaService {
       },
       take: paginationParams.take,
       skip: paginationParams.skip
-    })
+    });
+    return {
+      event: eventData,
+      medias: eventMedias
+    }
   }
 
   getEventStats(event: ICategoriedEventData) {
