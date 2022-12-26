@@ -3,12 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { CustomConfigModule } from './config/custom-config.module';
 import databaseConfig from './config/database.config';
 import { validate } from './config/env.validation';
+import s3Config from './config/s3.config';
 
 @Module({
   imports: [ConfigModule.forRoot(
     {
       isGlobal: true,
-      load: [databaseConfig],
+      load: [databaseConfig, s3Config],
       validate: validate,
     }   
   ), CustomConfigModule],
@@ -17,7 +18,7 @@ import { validate } from './config/env.validation';
   exports: [ConfigModule.forRoot(
     {
       isGlobal: true,
-      load: [databaseConfig],
+      load: [databaseConfig, s3Config],
       validate: validate,
     }   
   ), CustomConfigModule],
