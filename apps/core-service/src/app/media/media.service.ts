@@ -57,6 +57,16 @@ export class MediaService {
     })
   }
 
+  async findAllMediasOfAEventBasedOnStatusCount(eventId: string, status: EventMediaStatus){
+    const count = await this.prisma.eventEmployeesMedia.count({
+      where: {
+        eventId,
+        status
+      }
+    });
+    return {count}
+  }
+
   async findAllMediasOfAEventBasedOnStatus(eventId: string, status: EventMediaStatus, paginationParams: {take: number, skip: number}){
     const eventData = await this.prisma.event.findFirst({
       where: {
@@ -114,6 +124,7 @@ export class MediaService {
       mediasStatsCount.set(media.status, 1);
     }
     event.stats = Object.fromEntries(mediasStatsCount);
+    event.eventEmployeeMedia = [];
     return event;
   }
 
