@@ -100,7 +100,7 @@ export class MediaController {
     this.logger.log(`Endpoint tenant/${currentUser.tenantId}`)
     console.log(`status: ${status}`);
     if(status === EmployeeEventTypes.Unpublished) return this.mediaService.eventCategoryInfoMedias(currentUser.tenantId);
-    return {events: []}
+    return {}
   }
 
   @Get(':id')
