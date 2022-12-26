@@ -149,6 +149,8 @@ model Employee {
   modifiedOn DateTime @updatedAt
 
   @@unique([tenantId, email])
+
+  eventEmployeeMedia EventEmployeesMedia[]
 }
 
 model CompanyTitle {
@@ -245,6 +247,8 @@ model Event {
   notes        Note[]
   audiences    Audience[]
   participants Participant[]
+
+  eventEmployeeMedia EventEmployeesMedia[]
 }
 
 enum ParticipantType {
@@ -296,4 +300,44 @@ model Attachment {
 
   eventId String @db.VarChar(60)
   event   Event  @relation(fields: [eventId], references: [id])
+}
+
+// medias //
+enum EventMediaStatus {
+  Review
+  Shortlist
+  Publish
+  Reject
+}
+model EventEmployeeMediaListItem {
+  id       String @id @default(uuid())
+  name     String? @db.VarChar(255)
+  mimeType String? @db.VarChar(255)
+  key      String? @db.VarChar(255)
+  url      String? @db.VarChar(255)
+
+  eventEmployeeMediaId String @db.VarChar(60)
+  eventEmployeesMedia EventEmployeesMedia @relation(fields: [eventEmployeeMediaId], references: [id])
+}
+
+model EventEmployeesMedia {
+  id       String @id @default(uuid())
+
+  eventId String @db.VarChar(60)
+  event   Event  @relation(fields: [eventId], references: [id])
+
+  employeeId String @db.VarChar(60)
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  status EventMediaStatus @default(Review)
+
+  medias EventEmployeeMediaListItem[]
+
+  // =========== COMMON ========== //
+  createdBy String?  @db.VarChar(60)
+  createdOn DateTime @default(now())
+
+  modifiedBy String?  @db.VarChar(60)
+  modifiedOn DateTime @updatedAt
+  // =========== COMMON ========== //
 }
