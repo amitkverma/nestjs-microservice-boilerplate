@@ -3,7 +3,6 @@ import { MediaService } from './media.service';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-
 @Controller('upload')
 @ApiTags('upload')
 export class MediaController {
