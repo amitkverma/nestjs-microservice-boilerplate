@@ -1,14 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
+import { Controller, Get, Post, Logger, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
-import { Multer } from 'multer';
 
 
 @Controller('upload')
 @ApiTags('upload')
 export class MediaController {
+
+  private readonly logger = new Logger(MediaController.name);
   constructor(private readonly mediaService: MediaService) { }
 
   @Post()
@@ -25,9 +25,15 @@ export class MediaController {
     },
   })
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const uploadedFile = await this.mediaService.uploadFile(file);
-    return { ...uploadedFile, fileName: file.originalname, mimeType: file.mimetype }
+  async uploadFile(@UploadedFile() file) {
+    try {
+      this.logger.log(`file uploaded ${JSON.stringify(file)}`)
+      const uploadedFile = await this.mediaService.uploadFile(file);
+      return { ...uploadedFile, fileName: file.originalname, mimeType: file.mimetype }
+    } catch (error) {
+      this.logger.error(`unable to upload file ${error}`)
+      return error
+    }
   }
 
   @Get(':id')
