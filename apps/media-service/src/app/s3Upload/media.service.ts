@@ -35,7 +35,7 @@ export class MediaService {
     return `This action returns a #${id} media`;
   }
 
-  async uploadFile(file: Express.Multer.File) {
+  async uploadFile(file) {
     const params = {
       Bucket: this.AWS_S3_BUCKET,
       Body: readFileSync(file.path),
@@ -47,7 +47,7 @@ export class MediaService {
       },
     };
     try {
-      let s3Response = await this.s3.upload(params).promise();
+      const s3Response = await this.s3.upload(params).promise();
       await unlinkAsync(file.path);
       return s3Response;
     }
