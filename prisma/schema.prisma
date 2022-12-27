@@ -141,11 +141,11 @@ model Employee {
   companyTitleId String?       @db.VarChar(60)
   companyTitle   CompanyTitle? @relation(fields: [companyTitleId], references: [id])
 
-  team           Team?         @relation(fields: [teamId], references: [id])
-  teamId         String?       @db.VarChar(60)
-  
-  tenant         Tenant        @relation(fields: [tenantId], references: [id])
-  tenantId       String        @db.VarChar(60)
+  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId String? @db.VarChar(60)
+
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String @db.VarChar(60)
 
   createdOn  DateTime @default(now())
   createdBy  String?  @db.VarChar(60)
@@ -177,8 +177,9 @@ model Team {
 
   employees Employee[]
 
-  tenant   Tenant @relation(fields: [tenantId], references: [id])
-  tenantId String @db.VarChar(60)
+  tenant   Tenant     @relation(fields: [tenantId], references: [id])
+  tenantId String     @db.VarChar(60)
+  Audience Audience[]
 
   @@unique([name, tenantId])
 }
@@ -287,13 +288,15 @@ model Participant {
 }
 
 model Audience {
-  id       String @id @default(uuid())
-  teamName String @db.VarChar(255)
+  id String @id @default(uuid())
+
+  teamId String @db.VarChar(60)
+  team   Team   @relation(fields: [teamId], references: [id])
 
   eventId String @db.VarChar(60)
   event   Event  @relation(fields: [eventId], references: [id])
 
-  @@unique([teamName, eventId])
+  @@unique([teamId, eventId])
 }
 
 model Note {
