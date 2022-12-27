@@ -18,16 +18,6 @@ export class TenantService {
       data: {
         ...tenantData, auth: {
           create: auth,
-        },
-        CompanyTitle: {
-          create: {
-            name: 'Default'
-          }
-        },
-        Team: {
-          create: {
-            name: 'Default'
-          }
         }
       },
       include: {

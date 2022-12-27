@@ -61,20 +61,7 @@ async function main() {
 
 
 async function EmployeeDefaultTeamsSeed(tenantId: string){
-    await Promise.all([
-        prisma.companyTitle.create({
-        data: {
-            name: 'Default',
-            tenantId
-        },
-        }),
-        prisma.team.create({
-        data: {
-            name: 'Default',
-            tenantId
-        },
-        }),
-    ]);
+    return false
 }
 
 async function EventsSeed() {
