@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -27,11 +27,6 @@ export class MediaController {
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const uploadedFile = await this.mediaService.uploadFile(file);
     return { ...uploadedFile, fileName: file.originalname, mimeType: file.mimetype }
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mediaService.findOne(id);
   }
 
 }

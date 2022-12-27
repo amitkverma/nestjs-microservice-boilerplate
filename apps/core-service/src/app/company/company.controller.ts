@@ -9,14 +9,14 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) { }
 
-  @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companyService.create(createCompanyDto);
+  @Post('tenant/:tenantId')
+  create(@Body() createCompanyDto: CreateCompanyDto, @Param('tenantId') tenantId: string) {
+    return this.companyService.create(createCompanyDto, tenantId);
   }
 
-  @Get()
-  findAll() {
-    return this.companyService.findAll();
+  @Get('tenant/:tenantId')
+  findAll(@Param('tenantId') tenantId: string) {
+    return this.companyService.findAll({where: {tenantId}});
   }
 
   @Get(':id')

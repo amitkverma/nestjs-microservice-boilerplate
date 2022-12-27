@@ -9,14 +9,14 @@ import { ApiTags } from '@nestjs/swagger';
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
-  @Post()
-  create(@Body() createTeamDto: CreateTeamDto) {
-    return this.teamService.create(createTeamDto);
+  @Post('tenant/:tenantId')
+  create(@Body() createTeamDto: CreateTeamDto, @Param('tenantId') tenantId: string) {
+    return this.teamService.create(createTeamDto, tenantId);
   }
 
-  @Get()
-  findAll() {
-    return this.teamService.findAll();
+  @Get('tenant/:tenantId')
+  findAll(@Param('tenantId') tenantId: string) {
+    return this.teamService.findAll({where: {tenantId}});
   }
 
   @Get(':id')

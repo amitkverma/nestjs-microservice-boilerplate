@@ -53,9 +53,11 @@ model Tenant {
   modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
-  users     User[]
-  auth      AuthClients?
-  employees Employee[]
+  users        User[]
+  auth         AuthClients?
+  employees    Employee[]
+  CompanyTitle CompanyTitle[]
+  Team         Team[]
 }
 
 model Role {
@@ -136,10 +138,12 @@ model Employee {
   isMarried         Boolean?
   weddingAniversary DateTime?
 
-  companyTitle   CompanyTitle? @relation(fields: [companyTitleId], references: [name])
-  companyTitleId String?       @default("Default") @db.VarChar(60)
-  team           Team?         @relation(fields: [teamId], references: [name])
-  teamId         String?       @default("Default") @db.VarChar(60)
+  companyTitleId String       @db.VarChar(60)
+  companyTitle   CompanyTitle @relation(fields: [companyTitleId], references: [id])
+
+  team           Team         @relation(fields: [teamId], references: [id])
+  teamId         String       @db.VarChar(60)
+  
   tenant         Tenant        @relation(fields: [tenantId], references: [id])
   tenantId       String        @db.VarChar(60)
 
@@ -148,25 +152,35 @@ model Employee {
   modifiedBy String?  @db.VarChar(60)
   modifiedOn DateTime @updatedAt
 
-  @@unique([tenantId, email])
-
   eventEmployeeMedia EventEmployeesMedia[]
+
+  @@unique([tenantId, email])
 }
 
 model CompanyTitle {
   id          String     @id @default(uuid())
-  name        String     @unique @db.VarChar(255)
+  name        String     @db.VarChar(255)
   description String?    @db.VarChar(255)
   employees   Employee[]
+
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String @db.VarChar(60)
+
+  @@unique([name, tenantId])
 }
 
 model Team {
   id          String   @id @default(uuid())
-  name        String   @unique @db.VarChar(255)
+  name        String   @db.VarChar(255)
   description String?  @db.VarChar(255)
   isRemote    Boolean?
 
   employees Employee[]
+
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  tenantId String @db.VarChar(60)
+
+  @@unique([name, tenantId])
 }
 
 // ===== Events Templates ====
@@ -187,13 +201,13 @@ model EventTemplate {
 }
 
 model EventTemplateMedia {
-  id          String        @id @default(uuid())
-  name        String        @db.VarChar(255)
-  mimeType    String        @db.VarChar(255)
-  key         String        @db.VarChar(255)
-  url         String        @db.VarChar(255)
-  eventId String        @db.VarChar(60)
-  eventTemplate   EventTemplate @relation(fields: [eventId], references: [id])
+  id            String        @id @default(uuid())
+  name          String        @db.VarChar(255)
+  mimeType      String        @db.VarChar(255)
+  key           String        @db.VarChar(255)
+  url           String        @db.VarChar(255)
+  eventId       String        @db.VarChar(60)
+  eventTemplate EventTemplate @relation(fields: [eventId], references: [id])
 }
 
 model EventCategory {
@@ -309,25 +323,26 @@ enum EventMediaStatus {
   Publish
   Reject
 }
+
 model EventEmployeeMediaListItem {
-  id       String @id @default(uuid())
+  id       String  @id @default(uuid())
   name     String? @db.VarChar(255)
   mimeType String? @db.VarChar(255)
   key      String? @db.VarChar(255)
   url      String? @db.VarChar(255)
 
-  eventEmployeeMediaId String @db.VarChar(60)
-  eventEmployeesMedia EventEmployeesMedia @relation(fields: [eventEmployeeMediaId], references: [id])
+  eventEmployeeMediaId String              @db.VarChar(60)
+  eventEmployeesMedia  EventEmployeesMedia @relation(fields: [eventEmployeeMediaId], references: [id])
 }
 
 model EventEmployeesMedia {
-  id       String @id @default(uuid())
+  id String @id @default(uuid())
 
   eventId String @db.VarChar(60)
   event   Event  @relation(fields: [eventId], references: [id])
 
-  employeeId String @db.VarChar(60)
-  employee Employee @relation(fields: [employeeId], references: [id])
+  employeeId String   @db.VarChar(60)
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
   status EventMediaStatus @default(Review)
 

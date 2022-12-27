@@ -30,11 +30,6 @@ export class MediaService {
     });
   }
 
-
-  findOne(id: string) {
-    return `This action returns a #${id} media`;
-  }
-
   async uploadFile(file: Express.Multer.File) {
     const params = {
       Bucket: this.AWS_S3_BUCKET,

@@ -54,22 +54,24 @@ async function main() {
     });
 
     await EventsSeed();
-    await EmployeeSeed();
+    await EmployeeDefaultTeamsSeed(defaultTenant.id);
 
     console.info(`[+] Seeded Db`);
 }
 
 
-async function EmployeeSeed(){
+async function EmployeeDefaultTeamsSeed(tenantId: string){
     await Promise.all([
         prisma.companyTitle.create({
         data: {
             name: 'Default',
+            tenantId
         },
         }),
         prisma.team.create({
         data: {
             name: 'Default',
+            tenantId
         },
         }),
     ]);

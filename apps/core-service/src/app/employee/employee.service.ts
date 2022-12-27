@@ -78,16 +78,20 @@ export class EmployeeService {
 
     const employeesBulkData = [];
     const employees = dfd.toJSON(df);
-    if (Array.isArray(employees)) {
-      employees?.map((employee: any) => employeesBulkData.push(this.employeeMapperFromCsvData(tenantId, employee)));
-    }
 
-    await Promise.all([
-      this.prisma.companyTitle.createMany({ skipDuplicates: true, data: companyTitlesBulkData }),
-      this.prisma.team.createMany({ skipDuplicates: true, data: teamsBulkData }),
-    ])
-    await this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData });
-    return true;
+
+    // 
+    
+    // if (Array.isArray(employees)) {
+    //   // employees?.map((employee: any) => employeesBulkData.push(this.employeeMapperFromCsvData(tenantId, employee)));
+    // }
+
+    // await Promise.all([
+    //   this.prisma.companyTitle.createMany({ skipDuplicates: true, data: companyTitlesBulkData }),
+    //   this.prisma.team.createMany({ skipDuplicates: true, data: teamsBulkData }),
+    // ])
+    // await this.prisma.employee.createMany({ skipDuplicates: true, data: employeesBulkData });
+    // return true;
   }
 
 

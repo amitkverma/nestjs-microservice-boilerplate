@@ -9,10 +9,10 @@ export class TeamService {
 
   constructor(private prisma: PrismaService) { }
 
-  async create(createTeamDto: CreateTeamDto) {
-    const team = await this.prisma.team.findFirst({where: {name: createTeamDto.name}});
+  async create(createTeamDto: CreateTeamDto, tenantId: string) {
+    const team = await this.prisma.team.findFirst({where: {name: createTeamDto.name, tenantId}});
     if(team) throw new HttpException(`This Team already Exsists`, HttpStatus.CONFLICT);
-    return this.prisma.team.create({ data: createTeamDto });
+    return this.prisma.team.create({ data: {...createTeamDto, tenantId} });
   }
 
   async findAll(params?: {
