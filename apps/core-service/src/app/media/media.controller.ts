@@ -16,7 +16,9 @@ import { PaginationParams } from '@spotlyt-backend/data/dtos';
 import { EventMediaStatus } from '@prisma/client';
 import { Authenticate } from '@spotlyt-backend/common';
 import { jwtUser } from '@spotlyt-backend/data/interfaces';
+import { EmployeeEventTypes } from './enums/enums';
 const baseURL = 'employee-media';
+
 @ApiTags('employee-medias')
 @Controller(baseURL)
 export class MediaController {
@@ -47,6 +49,23 @@ export class MediaController {
     return this.mediaService.findAllMediasOfAEventBasedOnStatus(eventId, (status as EventMediaStatus ?? "Review"), {take, skip});
   }
 
+  @ApiQuery({
+    name: "status",
+    enum: EventMediaStatus,
+    enumName: 'status',
+    description: "Status",
+    required: false
+  })
+  @Get('event/:eventId/count')
+  findAllMediasOfAEventBasedOnStatusCount(
+    @Param('eventId') eventId: string,
+    @Query('status') status?: string
+  ){
+    return this.mediaService.findAllMediasOfAEventBasedOnStatusCount(eventId, (status as EventMediaStatus ?? "Review"))
+  }
+
+
+
 
   @ApiQuery({
     name: "status",
@@ -65,14 +84,23 @@ export class MediaController {
 
 
 
-
+  @ApiQuery({
+    name: "status",
+    enum: EmployeeEventTypes,
+    enumName: 'EmployeeEventTypes',
+    description: "EmployeeEventTypes",
+    required: false
+  })
   @Get('tenant')
   @ApiBearerAuth('jwt')
   findAll(
-    @Authenticate() currentUser: jwtUser
+    @Authenticate() currentUser: jwtUser,
+    @Query('status') status: EmployeeEventTypes
   ) {
     this.logger.log(`Endpoint tenant/${currentUser.tenantId}`)
-    return this.mediaService.eventCategoryInfoMedias(currentUser.tenantId);
+    console.log(`status: ${status}`);
+    if(status === EmployeeEventTypes.Unpublished) return this.mediaService.eventCategoryInfoMedias(currentUser.tenantId);
+    return {}
   }
 
   @Get(':id')

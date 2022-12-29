@@ -3,7 +3,7 @@ import { Team as TeamModel } from '@prisma/client'
 export class TeamEntity implements TeamModel {
     id: string;
     name: string;
-    description: string | null;
-    isRemote: boolean | null;
-
+    description: string;
+    isRemote: boolean;
+    tenantId: string;
 }

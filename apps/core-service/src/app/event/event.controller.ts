@@ -83,9 +83,9 @@ export class EventController {
     return this.eventService.addEventAudience(createEventAudianceDto);
   }
 
-  @Delete('event-audiance/:eventId/team-name/:teamName')
-  removeEventAudience(@Param('eventId') eventId: string, @Param('teamName') teamName: string) {
-    return this.eventService.removeEventAudience(eventId, teamName);
+  @Delete('event-audiance/:eventId/team-name/:teamId')
+  removeEventAudience(@Param('eventId') eventId: string, @Param('teamId') teamId: string) {
+    return this.eventService.removeEventAudience(eventId, teamId);
   }
 
   @Put('event-participant')

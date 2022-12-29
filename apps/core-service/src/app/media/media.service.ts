@@ -57,8 +57,27 @@ export class MediaService {
     })
   }
 
-  findAllMediasOfAEventBasedOnStatus(eventId: string, status: EventMediaStatus, paginationParams: {take: number, skip: number}){
-    return this.prisma.eventEmployeesMedia.findMany({
+  async findAllMediasOfAEventBasedOnStatusCount(eventId: string, status: EventMediaStatus){
+    const count = await this.prisma.eventEmployeesMedia.count({
+      where: {
+        eventId,
+        status
+      }
+    });
+    return {count}
+  }
+
+  async findAllMediasOfAEventBasedOnStatus(eventId: string, status: EventMediaStatus, paginationParams: {take: number, skip: number}){
+    const eventData = await this.prisma.event.findFirst({
+      where: {
+        id: eventId
+      },
+      include: {
+        eventTemplate: true,
+        eventStatus: true
+      }
+    });
+    const eventMedias = await this.prisma.eventEmployeesMedia.findMany({
       where: {
         eventId,
         status
@@ -66,10 +85,33 @@ export class MediaService {
       include: {
         employee: true,
         medias: true,
+        event: {
+          select: {
+            name: true,
+            description: true,
+            image: true,
+            eventTemplate: {
+              select: {
+                name: true,
+                description: true,
+                image: true,
+                eventCategory: {
+                  select: {
+                    name: true
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       take: paginationParams.take,
       skip: paginationParams.skip
-    })
+    });
+    return {
+      event: eventData,
+      medias: eventMedias
+    }
   }
 
   getEventStats(event: ICategoriedEventData) {
@@ -82,6 +124,7 @@ export class MediaService {
       mediasStatsCount.set(media.status, 1);
     }
     event.stats = Object.fromEntries(mediasStatsCount);
+    event.eventEmployeeMedia = [];
     return event;
   }
 

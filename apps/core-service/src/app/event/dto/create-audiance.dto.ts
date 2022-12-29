@@ -10,7 +10,7 @@ export class CreateEventAudianceDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    teamName: string;
+    teamId: string;
 
     @IsUUID()
     @IsNotEmpty()

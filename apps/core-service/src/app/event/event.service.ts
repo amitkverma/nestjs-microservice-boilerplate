@@ -54,7 +54,11 @@ export class EventService {
       where: { id },
       include: {
         attachments: true,
-        audiences: true,
+        audiences: {
+          include: {
+            team: true
+          }
+        },
         eventTemplate: {
           include: {
             eventCategory: {
@@ -183,7 +187,7 @@ export class EventService {
     const audiance = await this.prisma.audience.findFirst({
       where: {
         eventId: audianceDto.eventId,
-        teamName: audianceDto.teamName,
+        teamId: audianceDto.teamId,
       },
     });
     if (audiance) {
@@ -192,11 +196,11 @@ export class EventService {
 
     return this.prisma.audience.create({ data: audianceDto });
   }
-  async removeEventAudience(eventId: string, teamName: string) {
+  async removeEventAudience(eventId: string, teamId: string) {
     const audiance = await this.prisma.audience.findFirst({
       where: {
         eventId,
-        teamName,
+        teamId,
       },
     });
     if (!audiance) {

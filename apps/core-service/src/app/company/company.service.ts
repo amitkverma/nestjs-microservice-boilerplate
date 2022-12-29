@@ -8,9 +8,9 @@ import { Prisma } from '@prisma/client';
 export class CompanyService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createCompanyDto: CreateCompanyDto) {
+  async create(createCompanyDto: CreateCompanyDto, tenantId: string) {
     const compantTitle = await this.prisma.companyTitle.findFirst({
-      where: { name: createCompanyDto.name },
+      where: { name: createCompanyDto.name, tenantId },
     });
     if (compantTitle)
       throw new HttpException(
@@ -21,6 +21,7 @@ export class CompanyService {
       data: {
         ...createCompanyDto,
         name: createCompanyDto.name,
+        tenantId
       },
     });
   }
