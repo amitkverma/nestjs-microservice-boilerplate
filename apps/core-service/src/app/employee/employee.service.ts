@@ -134,8 +134,8 @@ export class EmployeeService {
           });
         }
         else{
-          Logger.error(`Payload ${payload} is missing data`);
-          throw new HttpException(`Payload ${payload} is missing data`, HttpStatus.BAD_REQUEST)
+          Logger.error(`Payload ${JSON.stringify(payload)} is missing data`);
+          throw new HttpException(`Payload ${JSON.stringify(payload)} is missing data`, HttpStatus.BAD_REQUEST)
         }
         
       }
