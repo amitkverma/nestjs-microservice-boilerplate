@@ -1,5 +1,5 @@
 import { Controller, Get, Logger, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { AmazonS3FileInterceptor } from '@spotlyt-backend/multer-extended';
+import { AmazonS3FileInterceptor, MulterConfigLoader } from '@spotlyt-backend/multer-extended';
 
 import { AppService } from './app.service';
 
@@ -17,11 +17,23 @@ export class AppController {
   }
 
   @Post('upload/media')
-  @UseInterceptors(AmazonS3FileInterceptor('file'))
+  @UseInterceptors(AmazonS3FileInterceptor('file', {
+    thumbnail: { suffix: "thumb", width: 100, height: 100 }
+  }))
   uploadMediaFile(@UploadedFile() file) {
     this.logger.log(`media file is uploaded ${JSON.stringify(file)}`)
     return file;
   }
+
+  @Post('upload/document')
+  @UseInterceptors(AmazonS3FileInterceptor('file', {
+    fileFilter: MulterConfigLoader.filterDocumentFileExtension
+  }))
+  uploadDocument(@UploadedFile() file) {
+    this.logger.log(`file is uploaded ${JSON.stringify(file)}`)
+    return file;
+  }
+
 
   @Get()
   getData() {

@@ -7,4 +7,5 @@ export enum MulterExceptions {
   LIMIT_FIELD_COUNT = 'Too many fields',
   LIMIT_UNEXPECTED_FILE = 'Unexpected field',
   INVALID_IMAGE_FILE_TYPE = 'Invalid Image File Type',
+  INVALID_DOCUMENT_FILE_TYPE = 'Invalid Document File Type',
 }

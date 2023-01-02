@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import { AmazonS3Storage, ImageFileExtensions, MulterExceptions } from './multer-sharp';
+import { AmazonS3Storage, DocumentFileExtensions, ImageFileExtensions, MulterExceptions } from './multer-sharp';
 import { BadRequestException, Inject, Injectable, Logger, LoggerService } from '@nestjs/common';
 import { MulterModuleOptions, MulterOptionsFactory } from '@nestjs/platform-express';
 import { MULTER_EXTENDED_S3_OPTIONS } from './constants';
@@ -67,4 +67,18 @@ export class MulterConfigLoader implements MulterS3ConfigService {
 
     return cb(null, true);
   }
+
+  static filterDocumentFileExtension(req, file, cb) {
+    const { mimetype } = file;
+    const extension = mimetype.substring(mimetype.lastIndexOf('/') + 1);
+    const mimetypeIsNotDocument = (ext: DocumentFileExtensions): boolean =>
+      !Object.values(DocumentFileExtensions).includes(ext);
+
+    if (mimetypeIsNotDocument(extension)) {
+      req.fileValidationError = MulterExceptions.INVALID_DOCUMENT_FILE_TYPE;
+      return cb(new BadRequestException(MulterExceptions.INVALID_DOCUMENT_FILE_TYPE), false);
+    }
+
+    return cb(null, true);
+  }  
 }

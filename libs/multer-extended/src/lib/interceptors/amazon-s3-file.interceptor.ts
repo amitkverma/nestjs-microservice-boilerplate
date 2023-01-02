@@ -69,7 +69,6 @@ export function AmazonS3FileInterceptor(
           storageOptions = {
             ...this.options.storage.storageOpts,
             resize: [this.localOptions[extendedOptionProperty], { suffix: 'original' }],
-            ignoreAspectRatio: true,
             dynamicPath: this.localOptions.dynamicPath,
           };
           return AmazonS3Storage(storageOptions);

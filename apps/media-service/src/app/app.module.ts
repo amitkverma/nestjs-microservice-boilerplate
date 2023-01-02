@@ -25,7 +25,7 @@ const health_config: IHealthConfig = {
       },
       bucket: process.env.BUCKET_S3,
       basePath: process.env.S3_BASE_PATH,
-      fileSize: 5 * 1024 * 1024,
+      fileSize: 10 * 1024 * 1024, // 10 MB
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', '..', 'public')
