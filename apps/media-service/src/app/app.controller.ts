@@ -16,6 +16,13 @@ export class AppController {
     return file;
   }
 
+  @Post('upload/media')
+  @UseInterceptors(AmazonS3FileInterceptor('file'))
+  uploadMediaFile(@UploadedFile() file) {
+    this.logger.log(`media file is uploaded ${JSON.stringify(file)}`)
+    return file;
+  }
+
   @Get()
   getData() {
     return this.appService.getData();

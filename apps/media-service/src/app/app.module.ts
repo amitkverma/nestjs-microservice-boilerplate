@@ -4,8 +4,11 @@ import { CommonModule } from '@spotlyt-backend/common';
 import { CoreConfig } from '@spotlyt-backend/config';
 import { IHealthConfig } from '@spotlyt-backend/data/interfaces';
 import { MulterExtendedModule } from '@spotlyt-backend/multer-extended';
+import { ServeStaticModule } from '@nestjs/serve-static';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { join } from 'path';
 
 const health_config: IHealthConfig = {
   host: 'localhost',
@@ -22,7 +25,10 @@ const health_config: IHealthConfig = {
       },
       bucket: process.env.BUCKET_S3,
       basePath: process.env.S3_BASE_PATH,
-      fileSize: 1 * 1024 * 1024,
+      fileSize: 5 * 1024 * 1024,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', '..', 'public')
     }),
     CoreConfig, ConfigModule, CommonModule.register({ health: health_config })
   ],
